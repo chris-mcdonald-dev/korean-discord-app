@@ -19,7 +19,7 @@
   - Warns and ultimately temporarily mutes users when 8 or more messages that don't include Korean characters are sent consecutively in the specified Korean practice channel.
 
 - **Enforced Link Sharing**
-  - Uniquely tracks. warns, and ultimately temporarily mutes users when they post 3 or more messages that don't include links.
+  - Uniquely tracks, warns, and ultimately temporarily mutes users when they post 3 or more messages that don't include links.
   
 - **Keep Pinned Messages Under 50**
   - Automatically unpins oldest message when a channel reaches its 50 pin limit.  
