@@ -6,6 +6,7 @@ require("dotenv").config();
 const { explicitWordFilter } = require("./scripts/expletives");
 const { koreanObserver } = require("./scripts/korean-channel");
 const { resourcesObserver } = require("./scripts/resource-channels");
+const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
 
@@ -41,7 +42,7 @@ client.on("message", (message) => {
 		ping(message);
 		return;
 	}
-	if (message.content === "unmute everyone") {
+	if (message.content === `unmute everyone <@!${process.env.CLIENT_ID}>`) {
 		unMuteAll(message);
 		return;
 	}
