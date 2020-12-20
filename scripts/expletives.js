@@ -53,9 +53,4 @@ function explicitWordFilter(message) {
 	}
 }
 
-function someFunc() {
-	x = 5;
-	someFunc2();
-}
-
 module.exports = { explicitWordFilter };
