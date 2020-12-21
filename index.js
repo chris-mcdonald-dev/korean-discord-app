@@ -9,9 +9,11 @@ const { resourcesObserver } = require("./scripts/resource-channels");
 const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
+const { typingGame, typingGameListener, endTypingGame } = require("./scripts/activities/games");
 
 const client = new Discord.Client();
 const counter = {};
+global.tgFirstRoundStarted = false;
 
 // ----- TRIGGERED EVENTS -----
 
@@ -29,42 +31,60 @@ client.on("ready", () => {
 // Message Listener
 client.on("message", (message) => {
 	if (!message.guild) return; // Ignores DMs
-	message.content = message.content.toLowerCase();
+	text = message.content.toLowerCase();
 	regularQualifyCheck(message);
 	if (message.author.bot) {
 		if (message.type === "PINS_ADD") message.delete();
 		return; // Ignores messages from bots
 	}
 	if (message.type === "PINS_ADD") return; // Ignores PIN messages
-	if (message.content.includes("http")) return; // Ignores all links
-	if (message.content === `wake up! <@!${process.env.CLIENT_ID}>`) {
+	if (text.includes("http")) return; // Ignores all links
+	if (text.includes("wake up") && text.includes(process.env.CLIENT_ID)) {
 		// Bot's ID
 		ping(message);
 		return;
 	}
-	if (message.content === `unmute everyone <@!${process.env.CLIENT_ID}>`) {
+	if (text.includes("unmute everyone") && text.includes(process.env.CLIENT_ID)) {
 		unMuteAll(message);
 		return;
 	}
-	if (message.content === `<@!${process.env.CLIENT_ID}> copy the pins here.`) {
+	if (text.includes("copy") && text.includes("pins") && text.includes(process.env.CLIENT_ID)) {
 		getPinned(message);
 		return;
 	}
-	if (message.content === `<@!${process.env.CLIENT_ID}> paste the pins here.`) {
+	if (text.includes("paste") && text.includes("pins") && text.includes(process.env.CLIENT_ID)) {
 		movePinned(message, global.pinnedMessages);
 		return;
+	}
+
+	wroteStopFlag = false;
+	// --- EXERCISES ---
+	switch (true) {
+		case text.includes(process.env.CLIENT_ID) && text.includes("typing"):
+			typingGame(message);
+			break;
+		// case text === `{process.env.CLIENT_ID} categories`:
+		// 	categoriesGame(message, client);
+		// 	break;
+		case text.includes(process.env.CLIENT_ID) && text.includes("stop"):
+			wroteStopFlag = true;
+			endTypingGame(message, wroteStopFlag);
+			break;
+		case global.typingFlag === true:
+			typingGameListener(message, client);
+			break;
 	}
 
 	// Filters Explicit Words
 	explicitWordFilter(message);
 
 	// Manual unmute
-	if (message.content.includes("unmute <@!")) {
+	if (text.includes("unmute <@!")) {
 		try {
-			userId = message.content.split(" ")[1];
+			userId = text.split(" ")[1];
 			userId = userId.match(/\d/g).join("");
 			manualUnMute(message, userId, client);
-			console.log("Unmute Successful:", message.content);
+			console.log("Unmute Successful:", text);
 		} catch (e) {
 			console.log(e);
 		}
@@ -72,13 +92,13 @@ client.on("message", (message) => {
 
 	// Korean Channel Observer
 	channel = message.channel;
-	if (channel.id === process.env.KOREAN_CHANNEL) {
+	if (channel.id === process.env.KOREAN_CHANNEL || channel.id === process.env.TEST_CHANNEL) {
 		logMessageDate();
 		koreanObserver(message, counter, client);
 	}
 
 	// Resource Channel Observer
-	if (channel.id === process.env.LINKS_CHANNEL || channel.id === process.env.TEST_CHANNEL) {
+	if (channel.id === process.env.LINKS_CHANNEL) {
 		logMessageDate();
 		resourcesObserver(message, counter, client);
 	}
