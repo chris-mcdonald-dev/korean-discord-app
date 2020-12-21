@@ -79,12 +79,11 @@ client.on("message", (message) => {
 	explicitWordFilter(message);
 
 	// Manual unmute
-	if (text.includes("unmute <@!")) {
+	if (text.includes("unmute <@!") || text.includes("unmute @")) {
 		try {
 			userId = text.split(" ")[1];
 			userId = userId.match(/\d/g).join("");
 			manualUnMute(message, userId, client);
-			console.log("Unmute Successful:", text);
 		} catch (e) {
 			console.log(e);
 		}
