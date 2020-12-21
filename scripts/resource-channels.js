@@ -34,14 +34,14 @@ function resourcesObserver(message, counter, client) {
 	counter[message.author.username + " " + message.author.id][message.channel.name].count++;
 	console.log(`${message.author.username}'s Message number: ${counter[message.author.username + " " + message.author.id][message.channel.name].count}`);
 	console.log("HERE'S THE COUNTER OBJECT:", JSON.stringify(counter, null, 2));
-	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === warnOn) resourceChannelWarning(message);
+	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === warnOn) resourceChannelWarning(message, client);
 	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === muteOn) {
 		mute(message);
-		resourcesMuteMessage(message);
+		resourcesMuteMessage(message, client);
 	}
 }
 
-function resourceChannelWarning(message) {
+function resourceChannelWarning(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
 		.then((channel) => {
@@ -50,7 +50,7 @@ function resourceChannelWarning(message) {
 		.catch(console.error);
 }
 
-function resourcesMuteMessage(message) {
+function resourcesMuteMessage(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
 		.then((channel) => {
