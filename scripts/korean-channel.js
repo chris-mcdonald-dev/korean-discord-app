@@ -3,7 +3,7 @@ const { mute } = require("./users/permissions");
 const koreanRegEx = /[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g;
 
 function koreanObserver(message, counter, client) {
-	if (!message.member.hasPermission("MANAGE_ROLES")) return;
+	if (message.member.hasPermission("MANAGE_ROLES")) return;
 	client.channels
 		.fetch(process.env.KOREAN_CHANNEL)
 		.then((channel) => {
@@ -20,13 +20,13 @@ function koreanObserver(message, counter, client) {
 			if (counter[channel.name].count === 8) koreanChannelWarning(message, client);
 			if (counter[channel.name].count > 9) {
 				mute(message);
-				koreanChannelMute(message);
+				koreanChannelMute(message, client);
 			}
 		})
 		.catch(console.error);
 }
 
-function koreanChannelWarning(message) {
+function koreanChannelWarning(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
 		.then((channel) => {
@@ -35,7 +35,7 @@ function koreanChannelWarning(message) {
 		.catch(console.error);
 }
 
-function koreanChannelMute(message) {
+function koreanChannelMute(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
 		.then((channel) => {
