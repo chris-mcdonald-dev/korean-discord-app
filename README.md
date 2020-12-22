@@ -20,7 +20,10 @@
 
 - **Enforced Link Sharing**
   - Uniquely tracks, warns, and ultimately temporarily mutes users when they post 3 or more messages that don't include links.
-  
+
+- **Facilitates Korean Typing Exercises**
+  - Provides weekly vocabulary words to users to type in Korean and times how quickly they are able to type them out in Korean.
+
 - **Keep Pinned Messages Under 50**
   - Automatically unpins oldest message when a channel reaches its 50 pin limit.  
 <br>
@@ -42,3 +45,8 @@
   - Available to: Everyone
   - Command :
     - Wake up! @(Bot's name)
+
+- **Start Korean Typing Exercise**
+  - Available to: Everyone
+  - Command :
+    - @(Bot's name) typing
