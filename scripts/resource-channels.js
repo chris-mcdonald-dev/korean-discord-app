@@ -1,4 +1,5 @@
 const { mute } = require("./users/permissions");
+const { logMessageDate } = require("./utilities");
 
 const timeLimit = 120000;
 const warnOn = 3;
@@ -32,10 +33,19 @@ function resourcesObserver(message, counter, client) {
 	}
 
 	counter[message.author.username + " " + message.author.id][message.channel.name].count++;
+
 	console.log(`${message.author.username}'s Message number: ${counter[message.author.username + " " + message.author.id][message.channel.name].count}`);
-	console.log("HERE'S THE COUNTER OBJECT:", JSON.stringify(counter, null, 2));
-	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === warnOn) resourceChannelWarning(message, client);
+
+	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === warnOn) {
+		// Logs time
+		logMessageDate();
+		//Warns User
+		resourceChannelWarning(message, client);
+	}
 	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === muteOn) {
+		// Logs time
+		logMessageDate();
+		//Mutes User
 		mute(message);
 		resourcesMuteMessage(message, client);
 	}

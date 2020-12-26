@@ -1,4 +1,5 @@
 const { mute } = require("./users/permissions");
+const { logMessageDate } = require("./utilities");
 
 const koreanRegEx = /[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g;
 
@@ -15,6 +16,10 @@ function koreanObserver(message, counter, client) {
 				counter[channel.name].count = 0;
 				return;
 			}
+
+			// Logs time
+			logMessageDate();
+
 			counter[channel.name].count++;
 			console.log(`There have been: ${counter[channel.name].count} English messages sent in the practice-korean channel.`);
 			if (counter[channel.name].count === 8) koreanChannelWarning(message, client);

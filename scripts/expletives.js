@@ -1,3 +1,5 @@
+const { logMessageDate } = require("./utilities");
+
 // List of Expletives
 const expletives = {
 	fuck: "phlewflaff",
@@ -26,6 +28,7 @@ const strictExpletives = {
 // Expletive Filter
 function explicitWordFilter(message) {
 	if (check()) {
+		logMessageDate();
 		message.delete();
 		message.channel.send(`${message.author} wrote: "${global.newMessage}"`);
 		console.log(`Edited ${message.content} to ${global.newMessage}`);

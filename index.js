@@ -92,13 +92,11 @@ client.on("message", (message) => {
 	// Korean Channel Observer
 	channel = message.channel;
 	if (channel.id === process.env.KOREAN_CHANNEL || channel.id === process.env.TEST_CHANNEL) {
-		logMessageDate();
 		koreanObserver(message, counter, client);
 	}
 
 	// Resource Channel Observer
 	if (channel.id === process.env.LINKS_CHANNEL) {
-		logMessageDate();
 		resourcesObserver(message, counter, client);
 	}
 });
