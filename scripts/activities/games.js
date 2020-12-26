@@ -21,7 +21,14 @@ vocabWords = {
 	회사: "Company",
 };
 
-function typingGame(message) {
+function typingGame(message, client) {
+	if (message.channel.id !== process.env.EXERCISES_CHANNEL) {
+		client.channels.fetch(process.env.EXERCISES_CHANNEL).then((exerciseChannel) => {
+			message.reply(`Psst...I think you meant to send this in the ${exerciseChannel} channel.\nBut don't worry, no one noticed!`);
+		});
+		return;
+	}
+
 	try {
 		// Creates Global Typing Game object
 		global.typingGame = global.typingGame || {};
