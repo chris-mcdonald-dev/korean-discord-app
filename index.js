@@ -60,8 +60,8 @@ client.on("message", (message) => {
 	wroteStopFlag = false;
 	// --- EXERCISES ---
 	switch (true) {
-		case text.includes(process.env.CLIENT_ID) && text.includes("typing"):
-			typingGame(message);
+		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t":
+			typingGame(message, client);
 			break;
 		// case text === `{process.env.CLIENT_ID} categories`:
 		// 	categoriesGame(message, client);
