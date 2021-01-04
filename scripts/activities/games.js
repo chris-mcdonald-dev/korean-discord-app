@@ -49,7 +49,7 @@ weeklyVocab = {
 };
 
 function typingGame(message, client) {
-	if (message.channel.id !== process.env.EXERCISES_CHANNEL) {
+	if (message.channel.id !== process.env.EXERCISES_CHANNEL && message.channel.id !== process.env.TEST_CHANNEL) {
 		client.channels.fetch(process.env.EXERCISES_CHANNEL).then((exerciseChannel) => {
 			message.reply(`Psst...I think you meant to send this in the ${exerciseChannel} channel.\nBut don't worry, no one noticed!`);
 		});
@@ -190,4 +190,20 @@ function endTypingGame(message) {
 	global.tgFirstRoundStarted = false;
 }
 
-module.exports = { typingGame, typingGameListener, endTypingGame };
+function gameExplanation(message) {
+	// Sends typing game explanation
+	if (message.channel.id === process.env.EXERCISES_CHANNEL || message.channel.id === process.env.TEST_CHANNEL) {
+		//Ignores messages from the bot unless it's a message signaling end of game
+		if (message.author.bot && !text.includes("wins")) {
+			clearTimeout(global.explanationTimeout);
+			return;
+		}
+		//Clears timeout and starts new timeout for game explanation
+		clearTimeout(global.explanationTimeout);
+		global.explanationTimeout = setTimeout(() => {
+			message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n- ***OR*** -\n`!t`");
+		}, 10000);
+	}
+}
+
+module.exports = { typingGame, typingGameListener, endTypingGame, gameExplanation };

@@ -9,7 +9,7 @@ const { resourcesObserver } = require("./scripts/resource-channels");
 const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
-const { typingGame, typingGameListener, endTypingGame } = require("./scripts/activities/games");
+const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 
 const client = new Discord.Client();
 const counter = {};
@@ -57,15 +57,16 @@ client.on("message", (message) => {
 		return;
 	}
 
-	wroteStopFlag = false;
 	// --- EXERCISES ---
+	wroteStopFlag = false;
+
+	// Sends typing game explanation
+	gameExplanation(message);
+
 	switch (true) {
 		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t":
 			typingGame(message, client);
 			break;
-		// case text === `{process.env.CLIENT_ID} categories`:
-		// 	categoriesGame(message, client);
-		// 	break;
 		case text.includes(process.env.CLIENT_ID) && text.includes("stop"):
 			wroteStopFlag = true;
 			endTypingGame(message, wroteStopFlag);
