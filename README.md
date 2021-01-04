@@ -50,3 +50,4 @@
   - Available to: Everyone
   - Command :
     - @(Bot's name) typing
+    - !t
