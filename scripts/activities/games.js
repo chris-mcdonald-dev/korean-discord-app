@@ -193,16 +193,28 @@ function endTypingGame(message) {
 function gameExplanation(message) {
 	// Sends typing game explanation
 	if (message.channel.id === process.env.EXERCISES_CHANNEL || message.channel.id === process.env.TEST_CHANNEL) {
+		clearTimeout(global.noResponseTimeout);
+
 		//Ignores messages from the bot unless it's a message signaling end of game
 		if (message.author.bot && !text.includes("wins")) {
 			clearTimeout(global.explanationTimeout);
+			// Ignores typing game explanation message
+			// But sends explanation when game timeout runs out
+			if (!text.includes("!t")) {
+				global.noResponseTimeout = setTimeout(() => {
+					sendResponse(message);
+				}, 30000);
+			}
 			return;
 		}
 		//Clears timeout and starts new timeout for game explanation
 		clearTimeout(global.explanationTimeout);
 		global.explanationTimeout = setTimeout(() => {
-			message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n- ***OR*** -\n`!t`");
+			sendResponse(message);
 		}, 10000);
+	}
+	function sendResponse(message) {
+		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n- ***OR*** -\n`!t`");
 	}
 }
 

@@ -33,6 +33,10 @@ client.on("message", (message) => {
 	if (!message.guild) return; // Ignores DMs
 	text = message.content.toLowerCase();
 	regularQualifyCheck(message);
+
+	// Sends typing game explanation to exercise channel
+	gameExplanation(message);
+
 	if (message.author.bot) {
 		if (message.type === "PINS_ADD") message.delete();
 		return; // Ignores messages from bots
@@ -59,9 +63,6 @@ client.on("message", (message) => {
 
 	// --- EXERCISES ---
 	wroteStopFlag = false;
-
-	// Sends typing game explanation
-	gameExplanation(message);
 
 	switch (true) {
 		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t":
