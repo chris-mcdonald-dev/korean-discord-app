@@ -19,6 +19,33 @@ vocabWords = {
 	입다: "To wear / To put on (clothes)",
 	화장: "Make-up",
 	회사: "Company",
+	시험: "Test / Exam",
+	의자: "Chair",
+	책상: "Desk",
+	더럽다: "Dirty",
+	위: "Up / Top / Above",
+	청소: "Cleaning",
+	청소하다: "To clean",
+	깨끗하다: "To be clean",
+	공책: "Notebook",
+	필통: "Pencil Case",
+	시작하다: "To begin / To start",
+};
+
+weeklyVocab = {
+	연락하다: "To contact (someone)",
+	타다: "To ride (a bus/subway/car)",
+	나오다: "To come out",
+	나가다: "To go out",
+	들어오다: "To come in",
+	들어가다: "To go in",
+	사진: "A photograph",
+	찍다: "To take (a picture)",
+	올해: "This year",
+	상황: "A situation",
+	한가하다: "To be free / To have time",
+	받다: "To receive / To get (something)",
+	주다: "To give (something)",
 };
 
 function typingGame(message, client) {
@@ -42,9 +69,18 @@ function typingGame(message, client) {
 		global.typingFlag = true;
 
 		// Pulls random word from vocabWords
-		max = Object.keys(vocabWords).length;
-		seed = Math.floor(Math.random() * Math.floor(max));
-		key = Object.keys(vocabWords)[seed];
+		oldOrNewVocab = Math.floor(Math.random() * Math.floor(4)); //Determines whether user gets old or new vocab
+		if (oldOrNewVocab < 1) {
+			max = Object.keys(vocabWords).length;
+			seed = Math.floor(Math.random() * Math.floor(max));
+			key = Object.keys(vocabWords)[seed];
+			definition = vocabWords[key];
+		} else {
+			max = Object.keys(weeklyVocab).length;
+			seed = Math.floor(Math.random() * Math.floor(max));
+			key = Object.keys(weeklyVocab)[seed];
+			definition = weeklyVocab[key];
+		}
 
 		if (!global.tgFirstRoundStarted) {
 			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this word in Korean then!`), 1000);
@@ -62,12 +98,12 @@ function typingGame(message, client) {
 
 			// Send Korean vocab word to chat
 			global.typingGameTimeout = setTimeout(() => {
-				message.channel.send(`**${key}** - (${vocabWords[key]})`);
+				message.channel.send(`**${key}** - (${definition})`);
 				// 500 ms to approximately account for slight latency
 				global.typingGame.startTime = Date.now() + 500;
 			}, 7200);
 		} else {
-			message.channel.send(`**${key}** - (${vocabWords[key]})`);
+			message.channel.send(`**${key}** - (${definition})`);
 			global.typingGame.startTime = Date.now() + 500;
 		}
 
