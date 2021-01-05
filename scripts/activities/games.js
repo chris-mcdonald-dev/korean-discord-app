@@ -137,10 +137,13 @@ function typingGameListener(message, client) {
 			global.typingGame.endTime = Date.now();
 			global.typingGame.elapsed = global.typingGame.endTime - global.typingGame.startTime;
 			inSeconds = (global.typingGame.elapsed / 1000).toFixed(2);
+			global.typingGame.fullTime = global.typingGame.fullTime || 0;
+			unroundedNum = parseFloat(global.typingGame.fullTime) + parseFloat(inSeconds);
+			global.typingGame.fullTime = unroundedNum.toFixed(2);
 
 			message.channel.send(`Manomanoman, you sure are good at this!\n**${author} won round ${global.typingGame.roundCount}!**\nI wasn't really counting or anything, but it took you **${inSeconds} seconds**.`);
 
-			if (global.typingGame.roundCount < 3) {
+			if (global.typingGame.roundCount < 5) {
 				setTimeout(
 					() =>
 						message.channel.send(`Round ${global.typingGame.roundCount + 1} starts in **5**`).then((msg) => {
@@ -155,8 +158,10 @@ function typingGameListener(message, client) {
 				);
 			} else {
 				winners = global.typingGame.winners;
-				setTimeout(() => message.channel.send("I'm going to have to bring my A game next time."), 1000);
-				setTimeout(() => message.channel.send(`Here are this exercise's **results**:`), 1500);
+				fullTime = global.typingGame.fullTime;
+				setTimeout(() => message.channel.send("I'm going to have to bring my A-game next time."), 1000);
+				setTimeout(() => message.channel.send(`__Here are this exercise's **results**__:`), 1250);
+				setTimeout(() => message.channel.send(`You got through the entire thing in a total of **${fullTime}** seconds.`), 1500);
 				Object.keys(winners).forEach((winner) => {
 					setTimeout(() => message.channel.send(`${winner}: ${winners[winner]} wins`), 1600);
 				});
