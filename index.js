@@ -2,7 +2,7 @@
 const Discord = require("discord.js");
 require("dotenv").config();
 
-// Require higher level functions
+// Require custom functions
 const { explicitWordFilter } = require("./scripts/expletives");
 const { koreanObserver } = require("./scripts/korean-channel");
 const { resourcesObserver } = require("./scripts/resource-channels");
