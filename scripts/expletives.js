@@ -29,7 +29,7 @@ const strictExpletives = {
 
 // Expletive Filter
 function explicitWordFilter(message) {
-	if (check()) {
+	if (check(message)) {
 		logMessageDate();
 		message.delete();
 		message.channel.send(`${message.author} wrote: "${global.newMessage}"`);
