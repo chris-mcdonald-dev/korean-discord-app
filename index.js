@@ -1,8 +1,11 @@
-// Require core dependencies and config files
+/* ___________ REQUIRE CORE DEPENDENCIES AND CONFIG FILES ___________ */
+
 const Discord = require("discord.js");
 require("dotenv").config();
+/* ------------------------------------------------------- */
 
-// Require custom functions
+/* ________________ REQUIRE CUSTOM FUNCTIONS ________________ */
+
 const { explicitWordFilter } = require("./scripts/expletives");
 const { koreanObserver } = require("./scripts/korean-channel");
 const { resourcesObserver } = require("./scripts/resource-channels");
@@ -10,12 +13,16 @@ const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
+/* ------------------------------------------------------ */
+
+/* ________________ DECLARE MAIN VARIABLES ________________ */
 
 const client = new Discord.Client();
-const counter = {};
-global.tgFirstRoundStarted = false;
+const counter = {}; // Message counter object for users
+global.tgFirstRoundStarted = false; // Flag for Typing Game below
+/* -------------------------------------------------------- */
 
-// ----- TRIGGERED EVENTS -----
+/* ________________ INITIATING FUNCTION ________________ */
 
 client.on("ready", () => {
 	console.log("\nLittle LyonHeart ♡ is online.\n");
@@ -27,8 +34,10 @@ client.on("ready", () => {
 		.catch(console.error);
 	getAllChannels(client);
 });
+/* --------------------------------------------- */
 
-// Message Listener
+/* ________________ MAIN MESSAGE LISTENER ________________ */
+
 client.on("message", (message) => {
 	if (!message.guild) return; // Ignores DMs
 	text = message.content.toLowerCase();
@@ -65,13 +74,16 @@ client.on("message", (message) => {
 	wroteStopFlag = false;
 
 	switch (true) {
+		// Start Typing Game
 		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t":
 			typingGame(message, client);
 			break;
+		// Stop Typing Game
 		case text.includes(process.env.CLIENT_ID) && text.includes("stop"):
 			wroteStopFlag = true;
 			endTypingGame(message, wroteStopFlag);
 			break;
+		// Pass Message to Listener (while exercise is in progress)
 		case global.typingFlag === true:
 			typingGameListener(message, client);
 			break;
@@ -91,28 +103,32 @@ client.on("message", (message) => {
 		}
 	}
 
-	// Korean Channel Observer
+	// Ensure long conversations in English aren't being had in Korean Channel
 	channel = message.channel;
 	if (channel.id === process.env.KOREAN_CHANNEL || channel.id === process.env.TEST_CHANNEL) {
 		koreanObserver(message, counter, client);
 	}
 
-	// Resource Channel Observer
+	// Ensure long conversations aren't being had in Resource Channel
 	if (channel.id === process.env.LINKS_CHANNEL) {
 		resourcesObserver(message, counter, client);
 	}
 });
+/* --------------------------------------------------- */
 
+/* ________________ MANAGE PINNED MESSAGES ________________ */
 client.on("channelPinsUpdate", (channel) => {
 	channel.messages
 		.fetchPinned()
 		.then((messages) => {
+			// Discord only allows 50 pinned messages at once
 			if (messages.size === 50) unPin50thMsg(channel);
 		})
 		.catch(console.error);
 });
+/* ------------------------------------------------- */
 
-// Sends message to new members added to the 선배 role
+/* _____________ SENDS MESSAGE TO NEW MEMBERS ADDED TO THE 선배 ROLE _____________*/
 client.on("guildMemberUpdate", (oldMember, newMember) => {
 	oldRole = [...oldMember.roles.cache][0][1];
 	newRole = [...newMember.roles.cache][0][1];
@@ -126,5 +142,9 @@ client.on("guildMemberUpdate", (oldMember, newMember) => {
 		});
 	}
 });
+/* ------------------------------------------------- */
+
+/* ________________ FINALLY LOG IN TO DISCORD ________________ */
 
 client.login(process.env.ACCESS_TOKEN);
+/* ---------------------------------------------------- */
