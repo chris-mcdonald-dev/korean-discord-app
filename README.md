@@ -29,25 +29,10 @@
 <br>
 
 ### ***Commands*** :
- - **Move all pinned messages to another channel**
-   - Available to: Moderators
-   - Commands : 
-     - @(Bot's name) copy the pins here
-     - @(Bot's name) paste the pins here
 
-- **Manually Unmute users** *(used for emergencies if user is stuck on mute)*
-   - Available to: Moderators
-   - Commands : 
-     - Unmute @(User's name)
-     - Unmute everyone @(Bot's name)
-   
-- **Check if bot is running**
-  - Available to: Everyone
-  - Command :
-    - Wake up! @(Bot's name)
-
-- **Start Korean Typing Exercise**
-  - Available to: Everyone
-  - Command :
-    - @(Bot's name) typing
-    - !t
+| Explanation|  Accessible to  | Command |
+| :---:         |     :---:      |          :---: |
+| **Check if bot is running** |  Everyone  | <br>**Wake up! @`Bot's name`** <br><br> |
+| **Start Korean Typing Exercise** |  Everyone  | <br>**@`Bot's name` typing<br><br>***- OR -***<br><br>!t**<br><br> |
+| **Move all pinned messages to another channel**|  Moderators   | <br> **@`Bot's name` copy the pins here<br>@`Bot's name` paste the pins here** <br><br>  |
+| **Manually Unmute users** *(used for emergencies if user is stuck on mute)* |  Moderators  | <br>**Unmute @`User's name`<br>***(This unmutes a single user)***<br><br>***- OR -***<br><br>Unmute everyone @`Bot's name`<br>** *(This unmutes everyone)*<br><br>|
