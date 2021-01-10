@@ -1,6 +1,5 @@
 // Ping Test
 function ping(message) {
-	if (!message.member.hasPermission("MANAGE_ROLES")) return;
 	setTimeout(() => {
 		message.channel.startTyping();
 	}, 1500);
