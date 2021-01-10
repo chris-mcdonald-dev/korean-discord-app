@@ -39,12 +39,11 @@ function explicitWordFilter(message) {
 }
 
 /* Checks if message has expletives */
-function check() {
+function check(message) {
 	global.contentArray = message.content.split(/([^\w])/);
 	// Filters out null indexes of array.
 	noNulls = global.contentArray.filter(Boolean);
 
-	console.log(`CONTENT ARRAY: ${noNulls}`);
 	foundExpletive = false;
 	noNulls.forEach((word, index) => {
 		/* Filters out any string that includes expletive */
