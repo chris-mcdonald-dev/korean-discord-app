@@ -1,3 +1,5 @@
+/* ________________ Vocab Words _______________ */
+
 vocabWords = {
 	나: "I / Me",
 	회사원: "Employee of a company",
@@ -47,6 +49,9 @@ weeklyVocab = {
 	받다: "To receive / To get (something)",
 	주다: "To give (something)",
 };
+/* --------------------------------------- */
+
+/* ____________ Main Typing Game Function ____________ */
 
 function typingGame(message, client) {
 	if (message.channel.id !== process.env.EXERCISES_CHANNEL && message.channel.id !== process.env.TEST_CHANNEL) {
@@ -115,6 +120,9 @@ function typingGame(message, client) {
 		return;
 	}
 }
+/* ------------------------------------------- */
+
+/* _________________ Listens for messages from participants ___________________ */
 
 function typingGameListener(message, client) {
 	global.typingGame.listenerFlag = true;
@@ -176,8 +184,10 @@ function typingGameListener(message, client) {
 		return;
 	}
 }
+/* -------------------------------------------------- */
 
-// Ends Typing Game
+/* ____________________ Ends Typing Game __________________ */
+
 function endTypingGame(message) {
 	if (wroteStopFlag) {
 		if (global.typingFlag) {
@@ -194,7 +204,9 @@ function endTypingGame(message) {
 	global.typingFlag = false;
 	global.tgFirstRoundStarted = false;
 }
+/* -------------------------------------------------- */
 
+/* ___________________ Sends Game Explanation Message _________________ */
 function gameExplanation(message) {
 	// Sends typing game explanation
 	if (message.channel.id === process.env.EXERCISES_CHANNEL || message.channel.id === process.env.TEST_CHANNEL) {
@@ -222,5 +234,6 @@ function gameExplanation(message) {
 		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n- ***OR*** -\n`!t`");
 	}
 }
+/* ------------------------------------------------- */
 
 module.exports = { typingGame, typingGameListener, endTypingGame, gameExplanation };
