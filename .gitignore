@@ -1,3 +1,4 @@
 .env
+.gitattributes
 *.bat
 /node_modules
