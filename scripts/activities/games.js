@@ -32,9 +32,6 @@ vocabWords = {
 	공책: "Notebook",
 	필통: "Pencil Case",
 	시작하다: "To begin / To start",
-};
-
-weeklyVocab = {
 	연락하다: "To contact (someone)",
 	타다: "To ride (a bus/subway/car)",
 	나오다: "To come out",
@@ -48,6 +45,23 @@ weeklyVocab = {
 	한가하다: "To be free / To have time",
 	받다: "To receive / To get (something)",
 	주다: "To give (something)",
+};
+
+weeklyVocab = {
+	머리: "Head / Hair",
+	허리: "Back / Waist",
+	목: "Neck",
+	손: "Hand",
+	팔: "Arm",
+	다리: "Leg",
+	발: "Foot",
+	배: "Stomach",
+	배고프다: "To be hungry",
+	배부르다: "To be full",
+	다치다: "To get hurt",
+	아프다: "To hurt / be sick",
+	신발: "Shoe",
+	목마르다: "To be thirsty",
 };
 /* --------------------------------------- */
 
