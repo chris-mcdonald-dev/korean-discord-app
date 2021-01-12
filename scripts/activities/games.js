@@ -80,12 +80,15 @@ function typingGame(message, client) {
 		global.typingGame = global.typingGame || {};
 
 		// Checks if waiting to receive input from users
-		if (typeof global.typingGame.listenerFlag === "undefined" || !global.typingGame.listenerFlag) {
+		if (typeof global.typingGame.listenerFlag === "undefined" || global.typingGame.listenerFlag) {
 			endTypingGame(message);
 		}
 
 		// Sets flag showing game is in play to true
 		global.typingFlag = true;
+
+		/* Immediately sets listener flag to true at the start of each round */
+		global.typingGame.listenerFlag = true;
 
 		// Pulls random word from vocabWords
 		oldOrNewVocab = Math.floor(Math.random() * Math.floor(4)); //Determines whether user gets old or new vocab
@@ -139,9 +142,10 @@ function typingGame(message, client) {
 /* _________________ Listens for messages from participants ___________________ */
 
 function typingGameListener(message, client) {
-	global.typingGame.listenerFlag = true;
 	try {
 		if (message.content === global.typingGameKey) {
+			/* Sets listener flag to false when user gives the correct answer */
+			global.typingGame.listenerFlag = false;
 			global.typingGameKey = undefined;
 
 			// Creates round counter and increases count
