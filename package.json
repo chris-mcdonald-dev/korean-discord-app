@@ -4,7 +4,7 @@
   "description": "Little Lyon Heart",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "git push origin && forever stop index.js && forever start index.js"
   },
   "author": "Chris McDonald",
   "license": "ISC",
