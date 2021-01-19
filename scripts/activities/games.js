@@ -58,20 +58,20 @@ vocabWords = {
 	다치다: "To get hurt",
 	아프다: "To hurt / be sick",
 	신발: "Shoe",
-	목마르다: "To be thirsty",
+	"목이 마르다": "To be thirsty",
 };
 
 weeklyVocab = {
-	"빵": "Bread",
-	"음료수": "Beverage",
+	빵: "Bread",
+	음료수: "Beverage",
 	"좋은 아침이에요": "Good morning",
-	"아까": "Earlier",
-	"아침": "Breakfast",
-	"점심": "Lunch",
-	"저녁": "Dinner",
+	아까: "Earlier",
+	아침: "Morning (Breakfast)",
+	점심: "Lunch",
+	저녁: "Evening (Dinner)",
 	"잘 자다": "To sleep well",
 	"잘 먹겠습니다": "I will eat well",
-	"먹다": "To eat",
+	먹다: "To eat",
 };
 /* --------------------------------------- */
 
