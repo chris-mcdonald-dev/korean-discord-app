@@ -42,7 +42,7 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
 	if (!message.guild) return; // Ignores DMs
-	text = message.content.toLowerCase();
+	const text = message.content.toLowerCase();
 	regularQualifyCheck(message);
 
 	// Sends typing game explanation to exercise channel
@@ -73,7 +73,7 @@ client.on("message", (message) => {
 	}
 
 	// --- EXERCISES ---
-	wroteStopFlag = false;
+	let wroteStopFlag = false;
 
 	switch (true) {
 		// Start Typing Game
@@ -106,7 +106,7 @@ client.on("message", (message) => {
 	}
 
 	// Ensure long conversations in English aren't being had in Korean Channel
-	channel = message.channel;
+	const channel = message.channel;
 	if (channel.id === process.env.KOREAN_CHANNEL) {
 		koreanObserver(message, counter, client);
 	}

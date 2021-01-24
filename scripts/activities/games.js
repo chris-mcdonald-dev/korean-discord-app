@@ -1,6 +1,6 @@
 /* ________________ Vocab Words _______________ */
 
-vocabWords = {
+const vocabWords = {
 	나: "I / Me",
 	회사원: "Employee of a company",
 	너무: "Too / Very",
@@ -71,7 +71,7 @@ vocabWords = {
 	먹다: "To eat",
 };
 
-weeklyVocab = {
+const weeklyVocab = {
 	피곤하다: "To be tired, exhausted",
 	아름답다: "To be beautiful",
 	덥다: "To be hot (regarding weather)",
