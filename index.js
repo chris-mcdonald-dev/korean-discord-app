@@ -2,6 +2,8 @@
 
 const Discord = require("discord.js");
 require("dotenv").config();
+require("./database");
+
 /* ------------------------------------------------------- */
 
 /* ________________ REQUIRE CUSTOM FUNCTIONS ________________ */
