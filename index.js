@@ -15,6 +15,7 @@ const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
+const { getStudySessionParameters, createStudySession, getUpcomingStudySessions } = require("./scripts/activities/study-session");
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
@@ -115,6 +116,10 @@ client.on("message", (message) => {
 	if (channel.id === process.env.LINKS_CHANNEL) {
 		resourcesObserver(message, counter, client);
 	}
+
+	// Create study session
+	if(text.startsWith("!study")) getStudySessionParameters(message, createStudySession);
+	if(text.startsWith("!next study")) getUpcomingStudySessions(message);
 });
 /* --------------------------------------------------- */
 
