@@ -1,5 +1,5 @@
 const StudySession = require("mongoose").model("StudySession");
-const { replySuccess, replyError, STUDY_SESSION } = require("../reply");
+const { react, replySuccess, replyError, STUDY_SESSION } = require("../reply");
 
 function getDateFrom(text) {
     // Regex Declaration
@@ -33,23 +33,23 @@ function getStudySessionParameters(message, callback) {
     const estimatedLength = getEstimatedLengthFrom(text);
 
     // Return an error message if study session's start date valid
-    if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.MISSING_DATE);
-    if (startDate < new Date()) return replyError(message, STUDY_SESSION.DATE_PAST);
+    if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE);
+    if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST);
 
     return callback(message, { id, author, startDate, estimatedLength });
 }
 
 function createStudySession(message, studySession) {
     StudySession.create(studySession)
-        .then(() => replySuccess(message, STUDY_SESSION.CREATE_SUCCESS(studySession.startDate), ["⭐", "❌"]))
-        .catch(() => replyError(message, STUDY_SESSION.CREATE_ERROR));
+        .then(() => replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession), react(message, null, ["⭐", "❌"])))
+        .catch((error) => replyError(message, STUDY_SESSION.CREATE.ERROR(error)));
 }
 
 function getUpcomingStudySessions(message) {
-    StudySession.find({startDate: {$gt: new Date()}}, (err, studySessions) => {
-        if (err) return replyError(message);
-        if (studySessions.length === 0) return replyError(message, STUDY_SESSION.NO_UPCOMING_SESSIONS);
-        return replySuccess(message, STUDY_SESSION.NEXT(studySessions));
+    StudySession.find({startDate: {$gt: new Date()}}, (error, studySessions) => {
+        if (error) return replyError(message, STUDY_SESSION.UPCOMING.ERROR(error));
+        if (studySessions.length === 0) return replyError(message, STUDY_SESSION.UPCOMING.NOT_FOUND);
+        return replySuccess(message, STUDY_SESSION.UPCOMING.SUCCESS(studySessions));
     });
 }
 
