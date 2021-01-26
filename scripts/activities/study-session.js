@@ -38,8 +38,9 @@ function getStudySession(message) {
     const estimatedLength = getStudySessionEstimatedLength(text);
 
     // Return an error message if study session's start date valid
-    if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE);
-    if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST);
+    if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE, {embed: true});
+    if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST, {embed: true});
+    if (!estimatedLength) return replyError(message, STUDY_SESSION.CREATE.MISSING_TIME, {embed: true});
 
     return { id, author, startDate, estimatedLength };
 }
