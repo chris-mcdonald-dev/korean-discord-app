@@ -15,7 +15,7 @@ const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
-const { getStudySessionParameters, createStudySession, getUpcomingStudySessions } = require("./scripts/activities/study-session");
+const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
@@ -118,8 +118,41 @@ client.on("message", (message) => {
 	}
 
 	// Create study session
-	if(text.startsWith("!study")) getStudySessionParameters(message, createStudySession);
-	if(text.startsWith("!next study")) getUpcomingStudySessions(message);
+	if(text.startsWith("!study")) createStudySession(message);
+
+	// Find upcoming study sessions
+	if(text.startsWith("!upcoming study")) getUpcomingStudySessions(message);
+});
+/* --------------------------------------------------- */
+
+/* ________________ MAIN MESSAGE REACTION ADD LISTENER ________________ */
+
+client.on("messageReactionAdd", (messageReaction, user) => {
+	const {message, emoji} = messageReaction;
+	const text = message.content.toLowerCase();
+
+	// Don't intercept Bot's reactions
+	if (user.id === client.user.id) return;
+
+	// Subscribe to a study session
+	if (text.startsWith("!study") && emoji.name === "⭐") subscribeStudySession(message, user);
+
+	// Cancel study session
+	if (text.startsWith("!study") && emoji.name === "❌") cancelConfirmationStudySession(message, user);
+});
+/* --------------------------------------------------- */
+
+/* ________________ MAIN MESSAGE REACTION REMOVE LISTENER ________________ */
+
+client.on("messageReactionRemove", (messageReaction, user) => {
+	const {message, emoji} = messageReaction;
+	const text = message.content.toLowerCase();
+
+	// Don't intercept Bot's reactions
+	if (user.id === client.user.id) return;
+
+	// Unsubscribe to a study session
+	if (text.startsWith("!study") && emoji.name === "⭐") unsubscribeStudySession(message, user);
 });
 /* --------------------------------------------------- */
 

@@ -1,7 +1,9 @@
 const StudySession = require("mongoose").model("StudySession");
-const { react, replySuccess, replyError, STUDY_SESSION } = require("../reply");
+const { react } = require("../../utils/react");
+const { STUDY_SESSION } = require("../../constants/studySession");
+const { replyInfo, replySuccess, replyError, replySurvey } = require("../../utils/reply");
 
-function getDateFrom(text) {
+function getStudySessionDate(text) {
     // Regex Declaration
     const dateRgx = /(\d{4}[-|\/]\d{2}[-|\/]\d{2})/g; // YYYY-MM-DD | YYYY/MM/DD
     const timeRgx = /(?<hour>\d{2}:\d{2})\s?(?<ampm>am|pm)?/gi; // HH:mm | HH:mm am | HH:mm pm
@@ -13,7 +15,7 @@ function getDateFrom(text) {
     return new Date(`${date} ${hour} ${ampm}`);
 }
 
-function getEstimatedLengthFrom(text) {
+function getStudySessionEstimatedLength(text) {
     // Regex Declaration
     const hoursRgx = /(\d)\s?hour/; // h hour(s)
     const minutesRgx = /(\d{1,2})\s?min/; // mm min(utes)
@@ -25,23 +27,30 @@ function getEstimatedLengthFrom(text) {
     return estimatedLengthHours ? estimatedLengthHours * 60 : estimatedLengthMinutes;
 }
 
-function getStudySessionParameters(message, callback) {
+function getStudySession(message) {
     const text = message.content.toLowerCase();
     const id = message.id;
-    const author = message.author;
-    const startDate = getDateFrom(text);
-    const estimatedLength = getEstimatedLengthFrom(text);
+    const author = {
+        id: message.author.id,
+        username: message.author.username
+    };
+    const startDate = getStudySessionDate(text);
+    const estimatedLength = getStudySessionEstimatedLength(text);
 
     // Return an error message if study session's start date valid
     if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE);
     if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST);
 
-    return callback(message, { id, author, startDate, estimatedLength });
+    return { id, author, startDate, estimatedLength };
 }
 
-function createStudySession(message, studySession) {
+function createStudySession(message) {
+    const studySession = getStudySession(message);
     StudySession.create(studySession)
-        .then(() => replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession), react(message, null, ["⭐", "❌"])))
+        .then(() => {
+            replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession), {embed: true});
+            react(message, null, ["⭐", "❌"]);
+        })
         .catch((error) => replyError(message, STUDY_SESSION.CREATE.ERROR(error)));
 }
 
@@ -53,16 +62,35 @@ function getUpcomingStudySessions(message) {
     });
 }
 
-function subscribeStudySession(id, subscriberId) {
-
+function subscribeStudySession(message, user) {
+    StudySession.findOneAndUpdate({id: message.id}, {$push: {subscribersId: user.id}})
+        .then(() => replySuccess(message, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
+        .catch((error) => replyError(message, STUDY_SESSION.SUBSCRIBE.ERROR(error)));
 }
 
-function unsubscribeStudySession(id, subscriberId) {
-
+function unsubscribeStudySession(message, user) {
+    StudySession.findOneAndUpdate({id: message.id}, {$pull: {subscribersId: user.id}})
+        .then(() => replySuccess(message, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
+        .catch((error) => replyError(message, STUDY_SESSION.UNSUBSCRIBE.ERROR(error)));
 }
 
-function cancelStudySession(id) {
-    StudySession.findOneAndDelete({id});
+function cancelConfirmationStudySession(message, user) {
+    if (message.author.id !== user.id) replyError(STUDY_SESSION.CANCEL.UNAUTHORIZED);
+    replySurvey(message, user, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
+        .then((result) => {
+            switch (result) {
+                case "✅": return cancelStudySession(message, user);
+                case "❌": return replyInfo(message, STUDY_SESSION.CANCEL.CANCEL);
+                default: return replyInfo(message, STUDY_SESSION.CANCEL.TIME_ELAPSED);
+            }
+        })
+        .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 }
 
-module.exports = { getStudySessionParameters, createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelStudySession };
+function cancelStudySession(message, user) {
+    StudySession.findOneAndDelete({id: message.id})
+        .then(() => replySuccess(message, STUDY_SESSION.CANCEL.SUCCESS(user)))
+        .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
+}
+
+module.exports = { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession };

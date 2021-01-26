@@ -7,10 +7,14 @@ const mongoose = require('mongoose');
 
 const StudySessionSchema = new mongoose.Schema ({
     id: { type: String, unique: true, required: true },
-    author: { type: Object, required: true },
+    author: {
+        id: { type: String, required: true },
+        username: { type: String, required: true }
+    },
     subscribersId: [{ type: String, required: true }],
     startDate: { type: Date, required: true },
-    estimatedLength: { type: Number, required: true }
+    estimatedLength: { type: Number, required: true },
+    canceled: { type: Boolean, required: true, default: false }
 }, { collection: 'StudySession' });
 
 mongoose.model('StudySession', StudySessionSchema);
