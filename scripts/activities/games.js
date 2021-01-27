@@ -81,7 +81,7 @@ weeklyVocab = {
 	강: "River",
 	산책하다: "To take a walk, stroll",
 	"해가 뜨다": "To rise (sunrise)",
-	"헤가 지다": "Sunset",
+	"헤가 지다": "To set (sunset)",
 };
 /* --------------------------------------- */
 
