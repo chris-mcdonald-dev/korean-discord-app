@@ -59,9 +59,6 @@ vocabWords = {
 	아프다: "To hurt / be sick",
 	신발: "Shoe",
 	"목이 마르다": "To be thirsty",
-};
-
-weeklyVocab = {
 	빵: "Bread",
 	음료수: "Beverage",
 	"좋은 아침이에요": "Good morning",
@@ -72,6 +69,19 @@ weeklyVocab = {
 	"잘 자다": "To sleep well",
 	"잘 먹겠습니다": "I will eat well",
 	먹다: "To eat",
+};
+
+weeklyVocab = {
+	피곤하다: "To be tired, exhausted",
+	아름답다: "To be beautiful",
+	덥다: "To be hot (regarding weather)",
+	나무: "Tree",
+	춥다: "To be cold",
+	산: "Mountain",
+	강: "River",
+	산책하다: "To take a walk, stroll",
+	"해가 뜨다": "To rise (sunrise)",
+	"헤가 지다": "Sunset",
 };
 /* --------------------------------------- */
 
