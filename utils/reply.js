@@ -1,42 +1,65 @@
 const { react } = require('./react');
 
-// Callback that allow to delete Bot's own message after a defined delay
-function deleteReply(reply, delay) {
-    if (delay) setTimeout(() => reply.delete(), delay);
+/**
+ * Private message reply template
+ */
+function messageTemplate(author = undefined, {title = "", content = "", description = "", color = "", url = "", fields = []}) {
+    return {
+        content,
+        embed: {
+            author: author && {
+                name: `${author?.username}'s`,
+                iconURL: author?.displayAvatarURL(),
+                url: `https://discord.com/channels/@me/${author?.id}`
+            },
+            color,
+            description,
+            fields,
+            title,
+            thumbnail: author && {
+                url: author?.displayAvatarURL()
+            },
+            url
+        }
+    }
 }
 
-// Generate MessageEmbed object
-function generateEmbed(description, color) {
-    return {embed:{description, color: color}};
+/**
+ * Reply to a message
+ * @param message       the original message
+ * @param content?      the content of the reply
+ * @param title?        the title of the embed message
+ * @param url?          the url of the embed message title
+ * @param description?  the description of the embed message
+ * @param fields[]?     the fields of the embed message
+ * @param color?        the color of the embed message
+ * @param withAuthor?   display author on the embed message
+ * @return message      the reply message
+ */
+function replyInfo(message, {title = "", color = "BLUE", withAuthor = false, ...rest}) {
+    return message.channel.send(messageTemplate(withAuthor && message.author, {title, color, ...rest}));
 }
 
-// Private reply template function
-function reply(message, description, options = {}) {
-    const { color = undefined, mentionUser = false, embed = false } = options;
-    const content = embed ? generateEmbed(description, color) : description;
-
-    // Reply by mentioning User
-    if (mentionUser) return message.reply(content);
-    return message.channel.send(content);
+function replySuccess(message, {title = "Success ✅", color = "GREEN", withAuthor = false, ...rest}) {
+    return message.channel.send(messageTemplate(withAuthor && message.author, {title, color, ...rest}));
 }
 
-// Public reply functions
-function replyInfo(message, description, options) {
-    return reply(message, description, {...options, color: 'BLUE'});
+function replyError(message, {title = "Error ❌", color = "RED", withAuthor = false, ...rest}) {
+    return message.channel.send(messageTemplate(withAuthor && message.author, {title, color, ...rest}));
 }
 
-function replySuccess(message, description, options) {
-    return reply(message, description, {...options, color: 'GREEN'});
-}
-
-function replyError(message, description, options) {
-    return reply(message, description, {...options, color: 'RED'});
-}
-
-function replySurvey(message, author, survey, surveyOptions, delay) {
-    return reply(message, survey).then(async (survey) => {
+/**
+ * Reply with a survey - Survey can only be replied by their original author
+ * @param message       the original message
+ * @param survey        the survey topic
+ * @param surveyOptions the reaction options
+ * @param delay         delay before the survey is cancelled
+ * @return reaction     the selected reaction
+ */
+function replySurvey(message, survey, surveyOptions, delay) {
+    return message.reply(message, survey).then(async (survey) => {
         react(survey, null, surveyOptions);
-        return survey.awaitReactions((reaction, user) => user.id === author.id && surveyOptions.includes(reaction.emoji.name), { max: 1, time: delay })
+        return survey.awaitReactions((reaction, user) => user.id === message.author.id && surveyOptions.includes(reaction.emoji.name), { max: 1, time: delay })
             .then((collected) => collected?.first()?.emoji?.name);
     });
 }

@@ -27,9 +27,14 @@ function getStudySessionEstimatedLength(text) {
     return estimatedLengthHours ? estimatedLengthHours * 60 : estimatedLengthMinutes;
 }
 
+// Retrieve Study Session information from message
 function getStudySession(message) {
-    const text = message.content.toLowerCase();
-    const id = message.id;
+    const text = message.content;
+    const m = {
+        id: message.id,
+        text: text.replace("!study", ""),
+        link: message.url
+    };
     const author = {
         id: message.author.id,
         username: message.author.username
@@ -38,29 +43,31 @@ function getStudySession(message) {
     const estimatedLength = getStudySessionEstimatedLength(text);
 
     // Return an error message if study session's start date valid
-    if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE, {embed: true});
-    if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST, {embed: true});
-    if (!estimatedLength) return replyError(message, STUDY_SESSION.CREATE.MISSING_TIME, {embed: true});
+    if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE);
+    if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST);
+    if (!estimatedLength) return replyError(message, STUDY_SESSION.CREATE.MISSING_TIME);
 
-    return { id, author, startDate, estimatedLength };
+    return { message: m, author, startDate, estimatedLength };
 }
 
 function createStudySession(message) {
     const studySession = getStudySession(message);
+    // Check if studySession is a promise
+    if (typeof studySession.then === "function") return null;
     StudySession.create(studySession)
         .then(() => {
-            replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession), {embed: true});
+            replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession));
             react(message, null, ["⭐", "❌"]);
         })
         .catch((error) => replyError(message, STUDY_SESSION.CREATE.ERROR(error)));
 }
 
 function getUpcomingStudySessions(message) {
-    StudySession.find({startDate: {$gt: new Date()}}, (error, studySessions) => {
+    StudySession.find({startDate: {$gt: new Date()}}, null, {sort: "startDate"}, (error, studySessions) => {
         if (error) return replyError(message, STUDY_SESSION.UPCOMING.ERROR(error));
         if (studySessions.length === 0) return replyError(message, STUDY_SESSION.UPCOMING.NOT_FOUND);
         return replySuccess(message, STUDY_SESSION.UPCOMING.SUCCESS(studySessions));
-    });
+    }).limit(5);
 }
 
 function subscribeStudySession(message, user) {
@@ -76,8 +83,8 @@ function unsubscribeStudySession(message, user) {
 }
 
 function cancelConfirmationStudySession(message, user) {
-    if (message.author.id !== user.id) replyError(STUDY_SESSION.CANCEL.UNAUTHORIZED);
-    replySurvey(message, user, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
+    if (message.author.id !== user.id) return replyError(message, STUDY_SESSION.CANCEL.UNAUTHORIZED);
+    replySurvey(message, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
         .then((result) => {
             switch (result) {
                 case "✅": return cancelStudySession(message, user);
