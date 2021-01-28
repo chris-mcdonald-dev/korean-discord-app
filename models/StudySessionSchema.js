@@ -8,8 +8,8 @@ const mongoose = require('mongoose');
 const StudySessionSchema = new mongoose.Schema ({
     message: {
         id: { type: String, unique: true, required: true },
-        text: { type: String, required: true },
-        link: { type: String, required: true }
+        link: { type: String, required: true },
+        text: { type: String, required: true }
     },
     author: {
         id: { type: String, required: true },

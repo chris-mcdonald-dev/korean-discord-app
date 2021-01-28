@@ -16,11 +16,12 @@ const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
+const { loadMessageReaction } = require("./utils/cache");
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
-const client = new Discord.Client();
+const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 const counter = {}; // Message counter object for users
 global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
@@ -127,7 +128,10 @@ client.on("message", (message) => {
 
 /* ________________ MAIN MESSAGE REACTION ADD LISTENER ________________ */
 
-client.on("messageReactionAdd", (messageReaction, user) => {
+client.on("messageReactionAdd", async (messageReaction, user) => {
+	// If the server has restarted, messages may not be cached
+	if (messageReaction.partial) await loadMessageReaction(messageReaction);
+
 	const {message, emoji} = messageReaction;
 	const text = message.content.toLowerCase();
 
@@ -144,7 +148,9 @@ client.on("messageReactionAdd", (messageReaction, user) => {
 
 /* ________________ MAIN MESSAGE REACTION REMOVE LISTENER ________________ */
 
-client.on("messageReactionRemove", (messageReaction, user) => {
+client.on("messageReactionRemove", async (messageReaction, user) => {
+	// If the server has restarted, messages may not be cached
+	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 	const {message, emoji} = messageReaction;
 	const text = message.content.toLowerCase();
 

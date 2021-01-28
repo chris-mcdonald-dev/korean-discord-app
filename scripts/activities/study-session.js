@@ -32,8 +32,8 @@ function getStudySession(message) {
     const text = message.content;
     const m = {
         id: message.id,
-        text: text.replace("!study", ""),
-        link: message.url
+        link: message.url,
+        text: text.replace("!study", "")
     };
     const author = {
         id: message.author.id,
