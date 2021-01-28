@@ -1,7 +1,7 @@
 const StudySession = require("mongoose").model("StudySession");
 const { react } = require("../../utils/react");
 const { STUDY_SESSION } = require("../../constants/studySession");
-const { replyInfo, replySuccess, replyError, replySurvey } = require("../../utils/reply");
+const { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage } = require("../../utils/message");
 
 function getStudySessionDate(text) {
     // Regex Declaration
@@ -72,14 +72,14 @@ function getUpcomingStudySessions(message) {
 
 function subscribeStudySession(message, user) {
     StudySession.findOneAndUpdate({id: message.id}, {$push: {subscribersId: user.id}})
-        .then(() => replySuccess(message, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
-        .catch((error) => replyError(message, STUDY_SESSION.SUBSCRIBE.ERROR(error)));
+        .then(() => sendDirectMessage(message.author, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
+        .catch((error) => sendDirectMessage(message.author, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
 }
 
 function unsubscribeStudySession(message, user) {
     StudySession.findOneAndUpdate({id: message.id}, {$pull: {subscribersId: user.id}})
-        .then(() => replySuccess(message, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
-        .catch((error) => replyError(message, STUDY_SESSION.UNSUBSCRIBE.ERROR(error)));
+        .then(() => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
+        .catch((error) => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.ERROR(user, error)));
 }
 
 function cancelConfirmationStudySession(message, user) {

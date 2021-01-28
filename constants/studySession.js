@@ -43,12 +43,20 @@ const STUDY_SESSION = {
         }
     },
     SUBSCRIBE: {
-        SUCCESS: (author, subscriber) => ({content: `💛 Hey <@${subscriber.id}>, you successfully registered to <@${author.id}> study session! See you soon!`}),
-        ERROR: (error) => ({description: `❌ Oops! An error as occurred while subscribing the study sessions. Please try again!${error ? `\n\n${error}` : ''}`})
+        SUCCESS: (author, subscriber) => ({content: `👋 Hey ${subscriber.username}, you successfully registered to <@${author.id}> study session! See you soon!`}),
+        ERROR: (author, error) => ({
+            content: `${author.username}, you just tried to subscribe to a study session. Thanks for your participation! However, an error as occurred during the process. Please try again! (and don't hesitate to notify <@202787014502776832> about this error)`,
+            title: "❌ Subscription error",
+            description: error
+        })
     },
     UNSUBSCRIBE: {
-        SUCCESS: (author, subscriber) => ({content: `😢 Oh dear <@${subscriber.id}>, you unsubscribed to <@${author.id}> study session... Maybe next time!`}),
-        ERROR: (error) => ({description: `❌ Oops! An error as occurred while unsubscribing the study sessions. Please try again!${error ? `\n\n${error}` : ''}`})
+        SUCCESS: (author, subscriber) => ({content: `😢 Oh dear ${subscriber.username}, you unsubscribed to <@${author.id}> study session... Maybe next time!`}),
+        ERROR: (error) => ({
+            content: `${author.username}, you just tried to unsubscribe to a study session... I'm sorry, but an error as occurred during the process. Please try again! (and don't hesitate to notify <@202787014502776832> about this error)`,
+            title: "❌ Unsubscription error",
+            description: error
+        })
     },
     CANCEL: {
         CONFIRMATION: (user) => ({content: `😮 <@${user.id}> Do you really want to cancel this study session? This action is irreversible`}),

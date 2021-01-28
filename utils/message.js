@@ -6,7 +6,7 @@ const { react } = require('./react');
 function messageTemplate(author = undefined, {title = "", content = "", description = "", color = "", url = "", fields = []}) {
     return {
         content,
-        embed: {
+        embed: description && {
             author: author && {
                 name: `${author?.username}'s`,
                 iconURL: author?.displayAvatarURL(),
@@ -64,4 +64,8 @@ function replySurvey(message, survey, surveyOptions, delay) {
     });
 }
 
-module.exports = { replyInfo, replySuccess, replyError, replySurvey };
+function sendDirectMessage(user, {title = "", color = "", ...rest}) {
+    return user.send(messageTemplate(null, {title, color, ...rest}));
+}
+
+module.exports = { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage };
