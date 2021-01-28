@@ -42,7 +42,7 @@ function getStudySession(message) {
     const startDate = getStudySessionDate(text);
     const estimatedLength = getStudySessionEstimatedLength(text);
 
-    // Return an error message if study session's start date valid
+    // Return an error message (promise) if study session's start date valid
     if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CREATE.MISSING_DATE);
     if (startDate < new Date()) return replyError(message, STUDY_SESSION.CREATE.DATE_PAST);
     if (!estimatedLength) return replyError(message, STUDY_SESSION.CREATE.MISSING_TIME);
@@ -71,13 +71,13 @@ function getUpcomingStudySessions(message) {
 }
 
 function subscribeStudySession(message, user) {
-    StudySession.findOneAndUpdate({id: message.id}, {$push: {subscribersId: user.id}})
+    StudySession.findOneAndUpdate({"message.id": message.id}, {$push: {subscribersId: user.id}})
         .then(() => sendDirectMessage(message.author, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
         .catch((error) => sendDirectMessage(message.author, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
 }
 
 function unsubscribeStudySession(message, user) {
-    StudySession.findOneAndUpdate({id: message.id}, {$pull: {subscribersId: user.id}})
+    StudySession.findOneAndUpdate({"message.id": message.id}, {$pull: {subscribersId: user.id}})
         .then(() => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
         .catch((error) => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.ERROR(user, error)));
 }
@@ -87,7 +87,7 @@ function cancelConfirmationStudySession(message, user) {
     replySurvey(message, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
         .then((result) => {
             switch (result) {
-                case "✅": return cancelStudySession(message, user);
+                case "✅": return cancelStudySession(message);
                 case "❌": return replyInfo(message, STUDY_SESSION.CANCEL.CANCEL);
                 default: return replyInfo(message, STUDY_SESSION.CANCEL.TIME_ELAPSED);
             }
@@ -95,9 +95,22 @@ function cancelConfirmationStudySession(message, user) {
         .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 }
 
-function cancelStudySession(message, user) {
-    StudySession.findOneAndDelete({id: message.id})
-        .then(() => replySuccess(message, STUDY_SESSION.CANCEL.SUCCESS(user)))
+function cancelStudySession(message) {
+    let hadSubscribers = false;
+    StudySession.findOne({"message.id": message.id}, (error, studySession) => {
+        if (error) return replyError(message, STUDY_SESSION.CANCEL.ERROR(error));
+        // If session has subscribers
+        if (studySession.subscribersId?.length > 0) return studySession.subscribersId.map((subscriberId) => {
+            hadSubscribers = true;
+            return message.client.users.fetch(subscriberId)
+                .then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.CANCEL.NOTIFICATION(message.author, subscriber)))
+                .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
+        });
+    });
+    StudySession.findOneAndRemove({"message.id": message.id})
+        .then(() => replySuccess(message, hadSubscribers ?
+            STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) :
+            STUDY_SESSION.CANCEL.SUCCESS(message.author)))
         .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 }
 

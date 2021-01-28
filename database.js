@@ -6,7 +6,12 @@ require('./models');
 
 /* ________________ INITIALIZE DATABASE CONNECTION ________________ */
 
-mongoose.connect(process.env.DATABASE_URI, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DATABASE_URI, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+})
     .then(() => console.log("Connection etablished"))
     .catch((e) => console.log("MongoDB Connection error :" + e));
 /* ------------------------------------------------------- */

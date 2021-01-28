@@ -8,7 +8,7 @@ const STUDY_SESSION = {
             withAuthor: true
         }),
         ERROR: (error) => ({
-            title: "❌ Unknown error",
+            title: "❌ Creation error",
             description: `Oops! An error as occurred while creating the study session. Please try again!${error ? `\n\n*${error}*` : ''}`
         }),
         DATE_PAST: {
@@ -27,14 +27,14 @@ const STUDY_SESSION = {
     UPCOMING: {
         SUCCESS: (sessions) => ({
             title: "UPCOMING STUDY SESSIONS",
-            content: "Here's the upcoming study sessions!",
+            content: "Here's the upcoming study sessions:",
             fields: sessions.map(session => ({
                 name: `${session.author.username}'s study session`,
                 value: `*${session.startDate?.toUTCString()} (${session.estimatedLength} min)*\n${session.message?.text} - Subscribe [here](${session.message?.link})`
             }))
         }),
         ERROR: (error) => ({
-            title: "❌ Unknown error",
+            title: "❌ Fetching error",
             description: `Oops! An error as occurred while fetching the study sessions. Please try again!${error ? `\n\n*${error}*` : ''}`
         }),
         NOT_FOUND: {
@@ -59,11 +59,16 @@ const STUDY_SESSION = {
         })
     },
     CANCEL: {
-        CONFIRMATION: (user) => ({content: `😮 <@${user.id}> Do you really want to cancel this study session? This action is irreversible`}),
-        SUCCESS: (user) => ({content: `😉 Roger! Every participants will be notified in DM. Looking forward to see you again, <@${user.id}>!`}),
+        CONFIRMATION: (author) => ({content: `😮 <@${author.id}> Do you really want to cancel this study session? This action is irreversible`}),
+        SUCCESS: (author) => ({content: `😉 Roger! Study session has been cancelled. Looking forward to see you again, <@${author.id}>!`}),
+        SUCCESS_WITH_SUBSCRIBERS: (author) => ({content: `😉 Roger! Every participants will be notified in DM. Looking forward to see you again, <@${author.id}>!`}),
+        NOTIFICATION: (author, subscriber) => ({content: `Hey ${subscriber.username}! I'm sorry to tell you that <@${author.id}> just cancelled a study session to which you were subscribed. It happens! See you soon!`}),
         TIME_ELAPSED: {content: "🕑 Tic, tac... One minute lapsed, let's say you didn't intend to cancel the session!"},
         CANCEL: {content: "😁 Oh, you didn't mean it! Alright, happy to hear that we can maintain the study session!"},
-        ERROR: (error) => ({description: `❌ Oops! An error as occurred while cancelling the study sessions. Please try again!${error ? `\n\n${error}` : ''}`}),
+        ERROR: (error) => ({
+            title: "❌ Cancellation error",
+            description: `Oops! An error as occurred while cancelling the study session. Please try again!${error ? `\n\n*${error}*` : ''}`
+        }),
         UNAUTHORIZED: {content: "❌ Hep! Only study session's owner can cancel it"}
     }
 };

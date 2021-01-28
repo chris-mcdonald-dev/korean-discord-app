@@ -3,10 +3,10 @@ const { react } = require('./react');
 /**
  * Private message reply template
  */
-function messageTemplate(author = undefined, {title = "", content = "", description = "", color = "", url = "", fields = []}) {
+function messageTemplate(author = undefined, {title = "", content = "", description = "", color = "", url = "", fields = undefined}) {
     return {
         content,
-        embed: description && {
+        embed: (description || fields) && {
             author: author && {
                 name: `${author?.username}'s`,
                 iconURL: author?.displayAvatarURL(),
@@ -57,7 +57,7 @@ function replyError(message, {title = "Error ❌", color = "RED", withAuthor = f
  * @return reaction     the selected reaction
  */
 function replySurvey(message, survey, surveyOptions, delay) {
-    return message.reply(message, survey).then(async (survey) => {
+    return message.channel.send(survey).then(async (survey) => {
         react(survey, null, surveyOptions);
         return survey.awaitReactions((reaction, user) => user.id === message.author.id && surveyOptions.includes(reaction.emoji.name), { max: 1, time: delay })
             .then((collected) => collected?.first()?.emoji?.name);
