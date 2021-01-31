@@ -105,7 +105,7 @@ client.on("message", (message) => {
 
 	// Ensure long conversations in English aren't being had in Korean Channel
 	channel = message.channel;
-	if (channel.id === process.env.KOREAN_CHANNEL || channel.id === process.env.TEST_CHANNEL) {
+	if (channel.id === process.env.KOREAN_CHANNEL) {
 		koreanObserver(message, counter, client);
 	}
 

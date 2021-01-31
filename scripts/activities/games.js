@@ -88,7 +88,7 @@ weeklyVocab = {
 /* ____________ Main Typing Game Function ____________ */
 
 function typingGame(message, client) {
-	if (message.channel.id !== process.env.EXERCISES_CHANNEL && message.channel.id !== process.env.TEST_CHANNEL) {
+	if (message.channel.id !== process.env.EXERCISES_CHANNEL) {
 		client.channels.fetch(process.env.EXERCISES_CHANNEL).then((exerciseChannel) => {
 			message.reply(`Psst...I think you meant to send this in the ${exerciseChannel} channel.\nBut don't worry, no one noticed!`);
 		});
@@ -247,7 +247,7 @@ function endTypingGame(message) {
 /* ___________________ Sends Game Explanation Message _________________ */
 function gameExplanation(message) {
 	// Sends typing game explanation
-	if (message.channel.id === process.env.EXERCISES_CHANNEL || message.channel.id === process.env.TEST_CHANNEL) {
+	if (message.channel.id === process.env.EXERCISES_CHANNEL) {
 		clearTimeout(global.noResponseTimeout);
 
 		//Ignores messages from the bot unless it's a message signaling end of game
