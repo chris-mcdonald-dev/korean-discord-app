@@ -4,7 +4,6 @@
   "description": "Little Lyon Heart",
   "main": "index.js",
   "scripts": {
-    "test": "git add . && git commit -m \"Update config files\" && git push https://github.com/crobin93/korean-discord-app.git task/add-continuous-deployment",
     "deploy": "git push origin && forever stop index.js && forever start index.js"
   },
   "author": "Chris McDonald",
