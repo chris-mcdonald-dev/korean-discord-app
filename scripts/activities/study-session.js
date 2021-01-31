@@ -82,6 +82,16 @@ function unsubscribeStudySession(message, user) {
         .catch((error) => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.ERROR(user, error)));
 }
 
+function notifySubscribers(client, studySession) {
+    studySession.subscribersId.map((subscriberId) => {
+        return client.users.fetch(subscriberId)
+            .then((subscriber) => {
+                sendDirectMessage(subscriber, STUDY_SESSION.SUBSCRIBE.REMINDER(studySession, subscriber))
+            })
+            .catch((error) => console.error(error));
+    })
+}
+
 function cancelConfirmationStudySession(message, user) {
     if (message.author.id !== user.id) return replyError(message, STUDY_SESSION.CANCEL.UNAUTHORIZED);
     replySurvey(message, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
@@ -95,23 +105,24 @@ function cancelConfirmationStudySession(message, user) {
         .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 }
 
-function cancelStudySession(message) {
-    let hadSubscribers = false;
-    StudySession.findOne({"message.id": message.id}, (error, studySession) => {
-        if (error) return replyError(message, STUDY_SESSION.CANCEL.ERROR(error));
-        // If session has subscribers
-        if (studySession.subscribersId?.length > 0) return studySession.subscribersId.map((subscriberId) => {
-            hadSubscribers = true;
-            return message.client.users.fetch(subscriberId)
-                .then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.CANCEL.NOTIFICATION(message.author, subscriber)))
-                .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
-        });
+function cancelNotifySubscribers(message, studySession) {
+    if (studySession.subscribersId?.length > 0) return studySession.subscribersId.map((subscriberId) => {
+        message.client.users.fetch(subscriberId)
+            .then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.CANCEL.NOTIFICATION(message.author, subscriber)))
+            .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
     });
-    StudySession.findOneAndRemove({"message.id": message.id})
-        .then(() => replySuccess(message, hadSubscribers ?
-            STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) :
-            STUDY_SESSION.CANCEL.SUCCESS(message.author)))
-        .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 }
 
-module.exports = { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession };
+function cancelStudySession(message) {
+    StudySession.findOne({"message.id": message.id}, (error, studySession) => {
+        if (error) return replyError(message, STUDY_SESSION.CANCEL.ERROR(error));
+        cancelNotifySubscribers(message, studySession);
+        studySession.remove()
+            .then(() => replySuccess(message, studySession.subscribersId.length > 0 ?
+                STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) :
+                STUDY_SESSION.CANCEL.SUCCESS(message.author)))
+            .catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
+    });
+}
+
+module.exports = { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, notifySubscribers, cancelConfirmationStudySession };

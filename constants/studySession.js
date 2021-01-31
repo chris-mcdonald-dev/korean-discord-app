@@ -1,10 +1,12 @@
+const { getUTCFullDate, getUTCFullTime } = require('../utils/date');
+
 // Study session's related messages
 const STUDY_SESSION = {
     CREATE: {
         SUCCESS: (session) => ({
             title: "STUDY SESSION",
             content: "Study session has been registered successfully!",
-            description: `📆 ${session.startDate?.toUTCString()}\n🕑 ${session.estimatedLength} minutes.\n\n${session.message?.text}\n\n*If anybody want to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, press the ❌ button*`,
+            description: `📆 ${getUTCFullDate(session.startDate)}\n🕑 ${session.estimatedLength} minutes.\n\n${session.message?.text}\n\n*If anybody want to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, press the ❌ button*`,
             withAuthor: true
         }),
         ERROR: (error) => ({
@@ -30,7 +32,7 @@ const STUDY_SESSION = {
             content: "Here's the upcoming study sessions:",
             fields: sessions.map(session => ({
                 name: `${session.author.username}'s study session`,
-                value: `*${session.startDate?.toUTCString()} (${session.estimatedLength} min)*\n${session.message?.text} - Subscribe [here](${session.message?.link})`
+                value: `*${getUTCFullDate(session.startDate)} (${session.estimatedLength} min)*\n${session.message?.text} - Subscribe [here](${session.message?.link})`
             }))
         }),
         ERROR: (error) => ({
@@ -44,6 +46,7 @@ const STUDY_SESSION = {
     },
     SUBSCRIBE: {
         SUCCESS: (author, subscriber) => ({content: `👋 Hey ${subscriber.username}, you successfully registered to <@${author.id}> study session! See you soon!`}),
+        REMINDER: (studySession, subscriber) => ({content: `👋 How is your day going, ${subscriber.username}? Thank you for waiting, <@${studySession.author.id}>'s study session is starting soon! See you on the Korean Study Group server at ${getUTCFullTime(studySession.startDate)}!`}),
         ERROR: (author, error) => ({
             content: `${author.username}, you just tried to subscribe to a study session. Thanks for your participation! However, an error as occurred during the process. Please try again! (and don't hesitate to notify <@202787014502776832> about this error)`,
             title: "❌ Subscription error",

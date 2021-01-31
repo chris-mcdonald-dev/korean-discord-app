@@ -17,7 +17,8 @@ const StudySessionSchema = new mongoose.Schema ({
     },
     subscribersId: [{ type: String, required: true }],
     startDate: { type: Date, required: true },
-    estimatedLength: { type: Number, required: true }
+    estimatedLength: { type: Number, required: true },
+    notificationSent: { type: Boolean, default: false }
 }, { collection: 'StudySession' });
 
 mongoose.model('StudySession', StudySessionSchema);
