@@ -4,7 +4,6 @@
   "description": "Little Lyon Heart",
   "main": "index.js",
   "scripts": {
-    "deploy": "git push origin main"
   },
   "author": "Chris McDonald",
   "license": "ISC",
