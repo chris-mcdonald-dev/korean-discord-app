@@ -3,6 +3,15 @@ name: Deploy application
 on:
     push:
         branches: main
+    workflow_dispatch:
+        branches: main
+        inputs:
+            reason:
+                description: "Reason"
+                required: true
+                default: "Failed deployment"
+            tags:
+                description: "Optional scenario tags"
 
 jobs:
     echo:
