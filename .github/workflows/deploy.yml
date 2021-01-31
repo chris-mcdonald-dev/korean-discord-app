@@ -1,0 +1,32 @@
+name: Deploy application
+
+on:
+    push:
+        branches: main
+
+jobs:
+    echo:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Add public IP to AWS security group
+              uses: sohelamin/aws-security-group-add-ip-action@master
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: "us-east-1"
+                  aws-security-group-id: ${{ secrets.AWS_SECURITY_GROUP_ID }}
+                  port: "22"
+                  description: "GitHub Action"
+            - name: Deploy app
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.EC2_HOST }}
+                  username: ec2-user
+                  key: ${{ secrets.EC2_PRIVATE }}
+                  port: 22
+                  script: |
+                      cd ~/korean-discord-app/
+                      git pull https://github.com/crobin93/korean-discord-app.git main
+                      npm install
+                      forever stop index.js
+                      forever start index.js
