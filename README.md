@@ -10,7 +10,7 @@
   - Prevents regular users from using moderator commands.
   
 - **Expletive Filter**
-  - Immediately filters messages that include expletives and replaces them with clean version of original messages.
+  - Immediately filters messages that include filterMessages and replaces them with clean version of original messages.
 
 - **Unique User Activity Tracking**
   - Tracks each user's unique activity and rewards active users by promoting them to a role with higher seniority.

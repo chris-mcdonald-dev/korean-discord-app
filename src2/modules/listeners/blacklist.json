@@ -1,0 +1,27 @@
+{
+    "expletives": [
+        {"value": "fuck", "replaceValue": "phlewflaff"},
+        {"value": "pussy", "replaceValue": "phloomance"},
+        {"value": "pussie", "replaceValue": "phloomancers"},
+        {"value": "dick", "replaceValue": "phloopdie"},
+        {"value": "bitch", "replaceValue": "phliminal"},
+        {"value": "nigger", "replaceValue": "phloshious"},
+        {"value": "titties", "replaceValue": "phlophinums"},
+        {"value": "titty", "replaceValue": "phlophinum"},
+        {"value": "shit", "replaceValue": "phloopy"},
+        {"value": "fuk", "replaceValue": "phlewflaff"},
+        {"value": "cunt", "replaceValue": "phlomingous"},
+        {"value": "choad", "replaceValue": "phlomoninom"},
+        {"value": "twat", "replaceValue": "phlololonum"},
+        {"value": "wanker", "replaceValue": "phlonominium"},
+        {"value": "bich", "replaceValue": "plinimal"},
+        {"value": "cock", "replaceValue": "phloopdie"},
+        {"value": "slut", "replaceValue": "phliminustrim"}
+    ],
+    "strictExpletives": [
+        {"value": "hoe", "replaceValue": "phloshdradomous"},
+        {"value": "chink", "replaceValue": "phlomingoromous"},
+        {"value": "fk", "replaceValue": "phlwflff"},
+        {"value": "시발", "replaceValue": "힝나삐짐"}
+    ]
+}
