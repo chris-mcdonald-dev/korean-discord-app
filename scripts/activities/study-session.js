@@ -6,7 +6,7 @@ const { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage } = 
 function getStudySessionDate(text) {
 	// Regex Declaration
 	const dateRgx = /(\d{4}[-|\/]\d{2}[-|\/]\d{2})/g; // YYYY-MM-DD | YYYY/MM/DD
-	const timeRgx = /(?<hour>\d{2}:\d{2})\s?(?<ampm>am|pm)?/gi; // HH:mm | HH:mm am | HH:mm pm
+	const timeRgx = /(?<hour>\d{1,2}:\d{2})\s?(?<ampm>am|pm)?/gi; // HH:mm | HH:mm am | HH:mm pm
 
 	// Catching information from message
 	const date = dateRgx.exec(text)?.[1];
