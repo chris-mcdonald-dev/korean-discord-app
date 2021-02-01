@@ -69,9 +69,6 @@ const vocabWords = {
 	"잘 자다": "To sleep well",
 	"잘 먹겠습니다": "I will eat well",
 	먹다: "To eat",
-};
-
-const weeklyVocab = {
 	피곤하다: "To be tired, exhausted",
 	아름답다: "To be beautiful",
 	덥다: "To be hot (regarding weather)",
@@ -82,6 +79,19 @@ const weeklyVocab = {
 	산책하다: "To take a walk, stroll",
 	"해가 뜨다": "To rise (sunrise)",
 	"해가 지다": "To set (sunset)",
+};
+
+const weeklyVocab = {
+	과일: "Fruits",
+	무지개: "Rainbow",
+	생선: "Fish (that we eat)",
+	회색: "Grey",
+	버섯: "Mushroom",
+	빨간색: "Red",
+	치즈: "Cheese",
+	노란색: "Yellow",
+	샐러드: "Salad",
+	녹색: "Green",
 };
 /* --------------------------------------- */
 
