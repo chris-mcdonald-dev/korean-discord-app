@@ -17,12 +17,12 @@ const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./script
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
-const runScheduler  = require("./scheduler").default;
+const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
-const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION'] });
+const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
 const counter = {}; // Message counter object for users
 global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
@@ -121,10 +121,10 @@ client.on("message", (message) => {
 	}
 
 	// Create study session
-	if(text.startsWith("!study")) createStudySession(message);
+	if (text.startsWith("!study")) createStudySession(message);
 
 	// Find upcoming study sessions
-	if(text.startsWith("!upcoming study")) getUpcomingStudySessions(message);
+	if (text.startsWith("!upcoming study")) getUpcomingStudySessions(message);
 });
 /* --------------------------------------------------- */
 
@@ -134,7 +134,7 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 	// If the server has restarted, messages may not be cached
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 
-	const {message, emoji} = messageReaction;
+	const { message, emoji } = messageReaction;
 	const text = message.content.toLowerCase();
 
 	// Don't intercept Bot's reactions
@@ -153,7 +153,7 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 client.on("messageReactionRemove", async (messageReaction, user) => {
 	// If the server has restarted, messages may not be cached
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
-	const {message, emoji} = messageReaction;
+	const { message, emoji } = messageReaction;
 	const text = message.content.toLowerCase();
 
 	// Don't intercept Bot's reactions
@@ -178,8 +178,8 @@ client.on("channelPinsUpdate", (channel) => {
 
 /* _____________ SENDS MESSAGE TO NEW MEMBERS ADDED TO THE 선배 ROLE _____________*/
 client.on("guildMemberUpdate", (oldMember, newMember) => {
-	oldRole = [...oldMember.roles.cache][0][1];
-	newRole = [...newMember.roles.cache][0][1];
+	const oldRole = [...oldMember.roles.cache][0][1];
+	const newRole = [...newMember.roles.cache][0][1];
 	if (oldRole.id === newRole.id) return;
 	console.log(`${newMember.user.username}\n  Old Role:\n     ${oldRole.name} \n  New Role:\n     ${newRole.name}`);
 	if (newRole.id === process.env.MODERATORS) {

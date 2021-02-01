@@ -56,8 +56,8 @@ function unPin50thMsg(channel) {
 		console.log(`${channel.name}: ${messages.size}`);
 		if (messages.size === 50) {
 			// Puts map keys into array and gets key at index 49
-			let key = [...messages.keys()][49];
-			let msg = messages.get(key);
+			const key = [...messages.keys()][49];
+			const msg = messages.get(key);
 			console.log("\nUNPINNING MESSAGE:", msg.content);
 			msg.unpin().then(() => {
 				if (msg.pinned === false) console.log("Successfully unpinned!");

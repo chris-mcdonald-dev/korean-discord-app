@@ -7,7 +7,7 @@ const muteOn = 4;
 
 // Spam Observer
 function resourcesObserver(message, counter, client) {
-	if (message.member.hasPermission("MANAGE_ROLES")) return;
+	// if (message.member.hasPermission("MANAGE_ROLES")) return;
 	// Initializes user-specific variables if undefined.
 	counter[message.author.username + " " + message.author.id] = counter[message.author.username + " " + message.author.id] || {};
 
@@ -17,6 +17,7 @@ function resourcesObserver(message, counter, client) {
 
 	counter[message.author.username + " " + message.author.id][message.channel.name].count = counter[message.author.username + " " + message.author.id][message.channel.name].count || 0;
 
+	let timeout;
 	function startTimeout() {
 		timeout = setTimeout(() => {
 			counter[message.author.username + " " + message.author.id][message.channel.name].count = 0;

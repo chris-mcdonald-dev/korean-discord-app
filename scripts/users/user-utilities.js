@@ -4,7 +4,7 @@ function regularQualifyCheck(message) {
 	global.guild.roles.fetch(process.env.ACTIVE_ROLE).then((regularRole) => {
 		if (message.member.roles.cache.find((r) => r.name === regularRole.name)) return;
 		let i = 0;
-		let username = message.author.username;
+		const username = message.author.username;
 		global[username] = global[username] || {};
 		global[username].allMsgs = global[username].allMsgs || [];
 		global.guild.channels.cache.forEach((ch) => {
