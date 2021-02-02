@@ -7,7 +7,7 @@
     "build": "babel src -d lib",
     "dev": "nodemon --exec babel-node src/index.js",
     "forever:start": "forever start lib/index.js",
-    "forever:stop": "forever stopall",
+    "forever:stop": "forever stop lib/index.js || exit 0",
     "prestart": "npm run build && npm run forever:stop",
     "start": "npm run forever:start"
   },
