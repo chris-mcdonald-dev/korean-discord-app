@@ -2,14 +2,29 @@
   "name": "study-group-bot",
   "version": "1.0.0",
   "description": "Little Lyon Heart",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "build": "babel src -d lib",
+    "dev": "nodemon --exec babel-node src/index.js",
+    "forever:start": "forever start lib/index.js",
+    "forever:stop": "forever stop lib/index.js || exit 0",
+    "prestart": "npm run build && npm run forever:stop",
+    "start": "npm run forever:start"
   },
   "author": "Chris McDonald",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "mongoose": "^5.11.8"
+    "mongoose": "^5.11.8",
+    "node-cron": "^2.0.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/plugin-proposal-throw-expressions": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "nodemon": "^2.0.7"
   }
 }

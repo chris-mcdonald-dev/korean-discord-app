@@ -1,6 +1,6 @@
 /* ________________ Vocab Words _______________ */
 
-vocabWords = {
+const vocabWords = {
 	나: "I / Me",
 	회사원: "Employee of a company",
 	너무: "Too / Very",
@@ -71,7 +71,7 @@ vocabWords = {
 	먹다: "To eat",
 };
 
-weeklyVocab = {
+const weeklyVocab = {
 	피곤하다: "To be tired, exhausted",
 	아름답다: "To be beautiful",
 	덥다: "To be hot (regarding weather)",
@@ -110,19 +110,7 @@ function typingGame(message, client) {
 		/* Immediately sets listener flag to true at the start of each round */
 		global.typingGame.listenerFlag = true;
 
-		// Pulls random word from vocabWords
-		oldOrNewVocab = Math.floor(Math.random() * Math.floor(4)); //Determines whether user gets old or new vocab
-		if (oldOrNewVocab < 1) {
-			max = Object.keys(vocabWords).length;
-			seed = Math.floor(Math.random() * Math.floor(max));
-			key = Object.keys(vocabWords)[seed];
-			definition = vocabWords[key];
-		} else {
-			max = Object.keys(weeklyVocab).length;
-			seed = Math.floor(Math.random() * Math.floor(max));
-			key = Object.keys(weeklyVocab)[seed];
-			definition = weeklyVocab[key];
-		}
+		const [max, seed, key, definition] = getVocab();
 
 		if (!global.tgFirstRoundStarted) {
 			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this word in Korean then!`), 1000);
@@ -159,6 +147,24 @@ function typingGame(message, client) {
 }
 /* ------------------------------------------- */
 
+function getVocab() {
+	// Pulls random word from vocabWords
+	const oldOrNewVocab = Math.floor(Math.random() * Math.floor(4)); //Determines whether user gets old or new vocab
+	if (oldOrNewVocab < 1) {
+		const max = Object.keys(vocabWords).length;
+		const seed = Math.floor(Math.random() * Math.floor(max));
+		const key = Object.keys(vocabWords)[seed];
+		const definition = vocabWords[key];
+		return [max, seed, key, definition];
+	} else {
+		const max = Object.keys(weeklyVocab).length;
+		const seed = Math.floor(Math.random() * Math.floor(max));
+		const key = Object.keys(weeklyVocab)[seed];
+		const definition = weeklyVocab[key];
+		return [max, seed, key, definition];
+	}
+}
+
 /* _________________ Listens for messages from participants ___________________ */
 
 function typingGameListener(message, client) {
@@ -171,7 +177,7 @@ function typingGameListener(message, client) {
 			// Creates round counter and increases count
 			global.typingGame.roundCount = global.typingGame.roundCount + 1 || 1;
 
-			author = message.author;
+			const author = message.author;
 
 			//Creates list of winners
 			global.typingGame.winners = global.typingGame.winners || {};
@@ -182,9 +188,9 @@ function typingGameListener(message, client) {
 			// Calculates time elapsed
 			global.typingGame.endTime = Date.now();
 			global.typingGame.elapsed = global.typingGame.endTime - global.typingGame.startTime;
-			inSeconds = (global.typingGame.elapsed / 1000).toFixed(2);
+			const inSeconds = (global.typingGame.elapsed / 1000).toFixed(2);
 			global.typingGame.fullTime = global.typingGame.fullTime || 0;
-			unroundedNum = parseFloat(global.typingGame.fullTime) + parseFloat(inSeconds);
+			const unroundedNum = parseFloat(global.typingGame.fullTime) + parseFloat(inSeconds);
 			global.typingGame.fullTime = unroundedNum.toFixed(2);
 
 			message.channel.send(`Manomanoman, you sure are good at this!\n**${author} won round ${global.typingGame.roundCount}!**\nI wasn't really counting or anything, but it took you **${inSeconds} seconds**.`);
@@ -203,8 +209,8 @@ function typingGameListener(message, client) {
 					1000
 				);
 			} else {
-				winners = global.typingGame.winners;
-				fullTime = global.typingGame.fullTime;
+				const winners = global.typingGame.winners;
+				const fullTime = global.typingGame.fullTime;
 				setTimeout(() => message.channel.send("I'm going to have to bring my A-game next time."), 1000);
 				setTimeout(() => message.channel.send(`__Here are this exercise's **results**__:`), 1250);
 				setTimeout(() => message.channel.send(`You got through the entire thing in a total of **${fullTime}** seconds.`), 1500);
@@ -227,7 +233,7 @@ function typingGameListener(message, client) {
 /* ____________________ Ends Typing Game __________________ */
 
 function endTypingGame(message) {
-	if (wroteStopFlag) {
+	if (typeof wroteStopFlag !== "undefined") {
 		if (global.typingFlag) {
 			message.channel.send('Fine, just don\'t ask me to call you "professor fasty fast" anymore.');
 		} else {
@@ -246,6 +252,7 @@ function endTypingGame(message) {
 
 /* ___________________ Sends Game Explanation Message _________________ */
 function gameExplanation(message) {
+	const text = message.content;
 	// Sends typing game explanation
 	if (message.channel.id === process.env.EXERCISES_CHANNEL) {
 		clearTimeout(global.noResponseTimeout);

@@ -37,5 +37,4 @@ jobs:
                       cd ~/korean-discord-app/
                       git pull https://github.com/crobin93/korean-discord-app.git main
                       npm install
-                      forever stop index.js
-                      forever start index.js
+                      npm start
