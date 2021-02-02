@@ -2,11 +2,14 @@
   "name": "study-group-bot",
   "version": "1.0.0",
   "description": "Little Lyon Heart",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "deploy": "git push origin main",
-    "dev": "nodemon --exec babel-node index.js",
-    "start": "babel-node index.js"
+    "build": "babel src -d lib",
+    "dev": "nodemon --exec babel-node -r dotenv/config src/index.js",
+    "forever:start": "forever start lib/index.js",
+    "forever:stop": "forever stopall",
+    "prestart": "npm run build && npm run forever:stop",
+    "start": "npm run forever:start"
   },
   "author": "Chris McDonald",
   "license": "ISC",

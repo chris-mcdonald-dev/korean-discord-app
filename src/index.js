@@ -1,8 +1,9 @@
 /* ___________ REQUIRE CORE DEPENDENCIES AND CONFIG FILES ___________ */
 
 const Discord = require("discord.js");
-require("dotenv").config();
 require("./database");
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 /* ------------------------------------------------------- */
 
