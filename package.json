@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "dev": "nodemon --exec babel-node -r dotenv/config src/index.js",
+    "dev": "nodemon --exec babel-node src/index.js",
     "forever:start": "forever start lib/index.js",
     "forever:stop": "forever stopall",
     "prestart": "npm run build && npm run forever:stop",
