@@ -72,14 +72,14 @@ function getUpcomingStudySessions(message) {
 
 function subscribeStudySession(message, user) {
 	StudySession.findOneAndUpdate({ "message.id": message.id }, { $push: { subscribersId: user.id } })
-		.then(() => sendDirectMessage(message.author, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
-		.catch((error) => sendDirectMessage(message.author, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
+		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
+		.catch((error) => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
 }
 
 function unsubscribeStudySession(message, user) {
 	StudySession.findOneAndUpdate({ "message.id": message.id }, { $pull: { subscribersId: user.id } })
-		.then(() => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
-		.catch((error) => sendDirectMessage(message.author, STUDY_SESSION.UNSUBSCRIBE.ERROR(user, error)));
+		.then(() => sendDirectMessage(user, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
+		.catch((error) => sendDirectMessage(user, STUDY_SESSION.UNSUBSCRIBE.ERROR(user, error)));
 }
 
 function notifySubscribers(client, studySession) {

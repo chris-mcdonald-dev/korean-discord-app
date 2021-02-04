@@ -40,6 +40,7 @@
 | :---:         |     :---:      |          :---: |
 | **Check if bot is running** |  Everyone  | <br>**Wake up! @`Bot's name`** <br><br> |
 | **Start Korean Typing Exercise** |  Everyone  | <br>**@`Bot's name` typing<br><br>***- OR -***<br><br>!t**<br><br> |
-| **Create Study Session** |  Everyone  | <br>**!study [2021/01/01] [02:00 am] [message]<br>!upcoming study**<br><br> |
+| **Create Study Session** |  Everyone  | <br>**!study `A message that includes: YYYY/MM/DD and HH:mm am/pm (ex. 2021/01/25 02:00 am)`**<br><br> |
+| **List Upcoming Study Sessions** |  Everyone  | <br>**!upcoming study**<br><br> |
 | **Move all pinned messages to another channel**|  Moderators   | <br> **@`Bot's name` copy the pins here<br>@`Bot's name` paste the pins here** <br><br>  |
 | **Manually Unmute users** *(used for emergencies if user is stuck on mute)* |  Moderators  | <br>**Unmute @`User's name`<br>***(This unmutes a single user)***<br><br>***- OR -***<br><br>Unmute everyone @`Bot's name`<br>** *(This unmutes everyone)*<br><br>|
