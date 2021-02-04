@@ -5,14 +5,15 @@ const { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage } = 
 
 function getStudySessionDate(text) {
 	// Regex Declaration
-	const dateRgx = /(\d{4}[-|\/]\d{2}[-|\/]\d{2})/g; // YYYY-MM-DD | YYYY/MM/DD
-	const timeRgx = /(?<hour>\d{1,2}:\d{2})\s?(?<ampm>am|pm)?/gi; // HH:mm | HH:mm am | HH:mm pm
+	const dateRgx = /(?<year>\d{4})[-|\/](?<month>\d{2})[-|\/](?<day>\d{2})/g; // YYYY-MM-DD | YYYY/MM/DD
+	const timeRgx = /(?<hour>\d{1,2}):(?<min>\d{2})\s?(?<ampm>am|pm)?/gi; // HH:mm | HH:mm am | HH:mm pm
 
 	// Catching information from message
-	const date = dateRgx.exec(text)?.[1];
-	const { hour, ampm = "" } = timeRgx.exec(text)?.groups ?? {};
+	const { year, month, day } = dateRgx.exec(text)?.groups ?? {};
+	const { hour, min, ampm = "" } = timeRgx.exec(text)?.groups ?? {};
+	const ampmHour = ampm === "pm" ? parseInt(hour) + 12 : hour;
 
-	return new Date(`${date} ${hour} ${ampm}`);
+	return new Date(Date.UTC(parseInt(year), parseInt(month), parseInt(day), ampmHour, parseInt(min)));
 }
 
 function getStudySessionEstimatedLength(text) {
