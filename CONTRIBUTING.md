@@ -2,66 +2,70 @@
 
 ## Requirements
 
-* git
-* Text editor
-* nodejs
-* Knowledge on javascript and [discord.js](https://discord.js.org/#/docs/main/stable/general/welcome)
+* Git
+* A text editor
+* Node.js
+* Knowledge of JavaScript and [Discord.js](https://discord.js.org/#/docs/main/stable/general/welcome)
 
-## Install git
+## Install Git
 
-git is a source code management program to keep track of the different changes in the project
+Git is a source code management program to keep track of the different changes in the project. It's the tool we use to work together!
 
-[Download git](https://git-scm.com/downloads)
+[Download Git](https://git-scm.com/downloads)
 
-## Install text Editor
+## Install a Text Editor
 
-If you don't have any text editor we recommed to install [Visual studio code](https://code.visualstudio.com/download)
+If you don't have a text editor we recommed installing [Visual Studio Code](https://code.visualstudio.com/download)
 
-## Install nodeJs
+## Install Node.js
 
-[Download nodeJs LTS](https://nodejs.org/en/)
+[Download Node.js LTS](https://nodejs.org/en/)
 
 ## Install forever
 
 [Download forever](https://www.npmjs.com/package/forever)
 
-## Install Moongo Db Community Server
+## (Optional) Create a DB on MongoDB Atlas or Install MoongoDB Community Server Locally
 
-[mongoDB](https://www.mongodb.com/try/download/community)
+[MongoDB Atlas](https://www.mongodb.com/cloud/atlas)  
+[MongoDB Community Server](https://www.mongodb.com/try/download/community)
 
-[doc](https://docs.mongodb.com/manual/administration/install-community/)
+[Documentation](https://docs.mongodb.com/manual/administration/install-community/)
 
-## Fork The project
+## Fork The Project
 
 * Create you own copy of the project
 
-## Set up the discord bot
+## Set Up the Discord Bot
 
-* Create a [discord](https://discord.com/developers/applications/) app `/Applications` click new Application and give it a name
-* Create a discord server where you have admin access
-* Create a copy of `.env-sample` rename the copy to `.env`
-* Replace `ACCESS_TOKEN` by `Client Secret` from your app [app](https://discord.com/developers/applications/)
-  * Replace `CLIENT_ID` by `Client Id`  from your [app](https://discord.com/developers/applications/)
-  * Replace `MOD_CHANNEL`, `CHAT_CHANNEL`, `LINKS_CHANNEL`, `KOREAN_CHANNEL`,`EXERCISES_CHANNEL` by the Id of a text channel. To get it right click on the text channel and click `Copy ID`
-  * Replace `SERVER_ID` by your `SERVER ID` to find it  right click on the server then go to `/Server Settings/ Widget` and copy `SERVER ID`
-  * Replace `Moderator` by your used Id to find it  right click on the server then `/Server Settings / Members` hover your user and click the three dots then `Copy ID`
-  * Replace `ACTIVE_ROLE` by your roles to find it  right click on the server then go to `/Server Settings/ Roles` and hover your role and click the three dots then `Copy ID`
-  * Replace `DATABASE_URI`
+* Create your own Discord server where you have admin access.
+* Create a new [Discord app](https://discord.com/developers/applications/) in the Discord Developer Portal. On the top right, click `New Application` and give it a name.
+* On the left side of the page, select `Bot` in the navigation bar and click `Add Bot` to create a new bot. Confirm.
+* In your forked repository, create a copy of the `.env-sample` file and rename the copy to `.env`.
+  * Back in the `Bot` settings on the [Discord Developer Portal](https://discord.com/developers/applications/) website, copy your bot's `Token` and paste it after `ACCESS_TOKEN=` in your `.env` file.
+  * Replace `CLIENT_ID` with the `Client ID` from your [app](https://discord.com/developers/applications/) found in the `General Information` settings.
+  * Replace `MOD_CHANNEL`, `CHAT_CHANNEL`, `LINKS_CHANNEL`, `KOREAN_CHANNEL`,`EXERCISES_CHANNEL` with the ID of text channels in your new Discord server. To get them, right click on the text channel and click `Copy ID`
+  * Replace `SERVER_ID` with your `SERVER ID`. To find it, right click on the server then go to `Server Settings -> Widget` and copy the `SERVER ID`
+  * (If applicable) Replace `Moderator` with your server's moderator role. To find it, right click on the server then go to `Server Settings -> Roles`. Hover over the corresponding role and click the three dots that appear. Then click `Copy ID`.
+  * (If applicable) Replace `ACTIVE_ROLE` with your server's active-members role. To find it, right click on the server then go to `Server Settings -> Roles`. Hover over the corresponding role and click the three dots that appear. Then `Copy ID`.
+  * (If applicable) Replace `DATABASE_URI` with the URI of your MongoDB database.
 
-## Start the app
+## Start the App
 
 From the project folder
 
 `npm start`
 
-## Run tests
+<!---
+NOT YET IMPLEMENTED
+## Run Tests
 
 `npm test`
-
-## Add changes
+--->
+## Add Changes
 
 * Create a branch
 * Write your changes
 * Commit
 * Push
-* Create a Merge Request (MR)/Pull Request (PR) from your Fork Project https://github.com/crobin93/korean-discord-app
+* Create a Pull Request (PR)/Merge Request (MR) from your forked project into the `development` branch. https://github.com/crobin93/korean-discord-app/tree/development
