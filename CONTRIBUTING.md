@@ -52,7 +52,7 @@ If you don't have a text editor we recommed installing [Visual Studio Code](http
 
 ## Start the App
 
-From the project folder
+From the project folder run this command in your terminal:
 
 `npm start`
 
