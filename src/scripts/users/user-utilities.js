@@ -14,7 +14,7 @@ function regularQualifyCheck(message) {
 						limit: 100,
 					})
 					.then((messages) => {
-						msgs = messages.filter((m) => m.author.id === message.author.id);
+						const msgs = messages.filter((m) => m.author.id === message.author.id);
 						msgs.forEach((m) => {
 							if (!global[username].allMsgs.includes(m)) {
 								global[username].allMsgs.push(m);
