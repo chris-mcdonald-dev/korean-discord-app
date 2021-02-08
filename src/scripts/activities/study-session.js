@@ -1,6 +1,6 @@
 const StudySession = require("mongoose").model("StudySession");
 const { react } = require("../../utils/react");
-const { STUDY_SESSION } = require("../../constants/studySession");
+import STUDY_SESSION from '../../messages/studySession';
 const { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage } = require("../../utils/message");
 
 function getStudySessionDate(text) {

@@ -1,4 +1,4 @@
-const { getUTCFullDate, getUTCFullTime } = require("../utils/date");
+import {getUTCFullDate, getUTCFullTime} from '../utils/date';
 
 // Study session's related messages
 const STUDY_SESSION = {
@@ -76,4 +76,4 @@ const STUDY_SESSION = {
 	},
 };
 
-module.exports = { STUDY_SESSION };
+export default STUDY_SESSION;
