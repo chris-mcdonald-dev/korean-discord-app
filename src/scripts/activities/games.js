@@ -79,9 +79,6 @@ const vocabWords = {
 	산책하다: "To take a walk, stroll",
 	"해가 뜨다": "To rise (sunrise)",
 	"해가 지다": "To set (sunset)",
-};
-
-const weeklyVocab = {
 	과일: "Fruits",
 	무지개: "Rainbow",
 	생선: "Fish (that we eat)",
@@ -92,6 +89,19 @@ const weeklyVocab = {
 	노란색: "Yellow",
 	샐러드: "Salad",
 	녹색: "Green",
+};
+
+const weeklyVocab = {
+	여권: "Passport",
+	비행기: "Airplane",
+	공항: "Airport",
+	지하철: "Subway / Metro",
+	택시: "Taxi",
+	지도: "Map",
+	숙소: "Lodging",
+	탑승: "Boarding",
+	대기: "Stand-by / Wait",
+	신분증: "ID",
 };
 /* --------------------------------------- */
 
