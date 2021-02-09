@@ -8,50 +8,60 @@ const muteOn = 4;
 // Spam Observer
 function resourcesObserver(message, counter, client) {
 	// if (message.member.hasPermission("MANAGE_ROLES")) return;
+
 	// Initializes user-specific variables if undefined.
-	counter[message.author.username + " " + message.author.id] = counter[message.author.username + " " + message.author.id] || {};
-
-	counter[message.author.username + " " + message.author.id][message.channel.name] = counter[message.author.username + " " + message.author.id][message.channel.name] || {};
-
-	counter[message.author.username + " " + message.author.id][message.channel.name].timeoutFlag = counter[message.author.username + " " + message.author.id][message.channel.name].timeoutFlag || false;
-
-	counter[message.author.username + " " + message.author.id][message.channel.name].count = counter[message.author.username + " " + message.author.id][message.channel.name].count || 0;
+	const channelName = message.channel.name;
+	const userReference = message.author.username + " " + message.author.id;
+	counter = createUserCounter(counter, userReference, channelName);
 
 	let timeout;
 	function startTimeout() {
 		timeout = setTimeout(() => {
-			counter[message.author.username + " " + message.author.id][message.channel.name].count = 0;
-			counter[message.author.username + " " + message.author.id][message.channel.name].timeoutFlag = false;
+			counter[userReference][message.channel.name].count = 0;
+			counter[userReference][message.channel.name].timeoutFlag = false;
 		}, timeLimit);
 	}
 	// Resets user-specific counter variable after timeout
-	if (counter[message.author.username + " " + message.author.id][message.channel.name].timeoutFlag === false) {
-		counter[message.author.username + " " + message.author.id][message.channel.name].timeoutFlag = true;
+	if (counter[userReference][message.channel.name].timeoutFlag === false) {
+		counter[userReference][message.channel.name].timeoutFlag = true;
 		startTimeout();
 	} else {
 		clearTimeout(timeout);
 		startTimeout();
 	}
 
-	counter[message.author.username + " " + message.author.id][message.channel.name].count++;
+	counter[userReference][message.channel.name].count++;
 
-	console.log(`${message.author.username}'s Message number: ${counter[message.author.username + " " + message.author.id][message.channel.name].count}`);
+	console.log(`${message.author.username}'s Message number: ${counter[userReference][message.channel.name].count}`);
 
-	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === warnOn) {
-		// Logs time
+	const userParams = { counter, userReference, channelName, message, client };
+	checkCount(userParams);
+}
+
+function createUserCounter(counter, userReference, channelName) {
+	counter[userReference] = counter[userReference] || {
+		[channelName]: {
+			timeoutFlag: false,
+			count: 0,
+		},
+	};
+	return counter;
+}
+
+function checkCount(userParams) {
+	const { counter, userReference, channelName, message, client } = userParams;
+	if (counter[userReference][channelName].count === warnOn) {
 		logMessageDate();
-		//Warns User
 		resourceChannelWarning(message, client);
 	}
-	if (counter[message.author.username + " " + message.author.id][message.channel.name].count === muteOn) {
-		// Logs time
+	if (counter[userReference][channelName].count === muteOn) {
 		logMessageDate();
-		//Mutes User
 		mute(message);
 		resourcesMuteMessage(message, client);
 	}
 }
 
+//Warns User
 function resourceChannelWarning(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
@@ -61,6 +71,7 @@ function resourceChannelWarning(message, client) {
 		.catch(console.error);
 }
 
+//Mutes User
 function resourcesMuteMessage(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
