@@ -5,7 +5,7 @@ const { User } = require("./users/user-utilities");
 const timeLimit = 120000;
 const warnOn = 3;
 const muteOn = 4;
-global.temp = {};
+const timeouts = {};
 
 // Spam Observer
 function resourcesObserver(message, users, client) {
@@ -44,24 +44,23 @@ function checkCount(params) {
 // Check if message cooldown time is up (shown by timeoutFlag)
 function checkTimeoutFlag(params) {
 	const { users, id, channelName } = params;
-	const timeoutKey = id + channelName;
+	const userChannelKey = id + channelName; // Key to access appropriate timeout
 	if (!users[id].channels[channelName].timeoutFlag) {
 		users[id].channels[channelName].timeoutFlag = true;
-		startTimeout(params, timeoutKey);
+		startTimeout(params, userChannelKey);
 	} else {
-		clearTimeout(global.temp[timeoutKey]);
-		startTimeout(params, timeoutKey);
+		clearTimeout(timeouts[userChannelKey]);
+		startTimeout(params, userChannelKey);
 	}
 }
 
 // Resets user-specific counter variable after timeout
-function startTimeout(params, timeoutKey) {
+function startTimeout(params, userChannelKey) {
 	const { users, id, channelName } = params;
-	const timeout = setTimeout(() => {
+	timeouts[userChannelKey] = setTimeout(() => {
 		users[id].channels[channelName].count = 0;
 		users[id].channels[channelName].timeoutFlag = false;
 	}, timeLimit);
-	global.temp[timeoutKey] = timeout;
 }
 
 //Warns User
