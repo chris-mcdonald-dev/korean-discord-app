@@ -3,6 +3,9 @@ const { logMessageDate } = require("./utilities");
 
 const koreanRegEx = /[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g;
 
+const warnOn = 8;
+const muteAfter = 10;
+
 function koreanObserver(message, chnlMsgs, client) {
 	if (message.member.hasPermission("MANAGE_ROLES")) return;
 	client.channels
@@ -19,8 +22,8 @@ function koreanObserver(message, chnlMsgs, client) {
 
 			chnlMsgs[channel.name].count++;
 
-			if (chnlMsgs[channel.name].count === 8) koreanChannelWarning(message, client);
-			if (chnlMsgs[channel.name].count > 9) {
+			if (chnlMsgs[channel.name].count === warnOn) koreanChannelWarning(message, client);
+			if (chnlMsgs[channel.name].count >= muteAfter) {
 				mute(message);
 				koreanChannelMute(message, client);
 			}
@@ -28,11 +31,10 @@ function koreanObserver(message, chnlMsgs, client) {
 		.catch(console.error);
 }
 
-// Checks if message has Korean
+// Checks if message has Korean and resets channel count
 function koreanMsgCheck(message, chnlMsgs, channel) {
 	if (koreanRegEx.test(message.content)) {
 		chnlMsgs[channel.name].count = 0;
-		return;
 	}
 }
 
