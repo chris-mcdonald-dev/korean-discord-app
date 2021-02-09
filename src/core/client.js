@@ -1,5 +1,6 @@
 import Discord from 'discord.js';
 import {clientConfig} from './config';
+import 'dotenv/config';
 
 /* Initialize Discord client
 ______________________________________________________________________________________________________________________*/
@@ -8,6 +9,6 @@ console.info('Connection to Discord...');
 client
     .login(process.env.ACCESS_TOKEN)
     .then(() => console.info('Connected to Discord'))
-    .catch((e) => throw `Discord connexion error: ${e}`);
+    .catch((e) => throw `Discord connection error: ${e}`);
 
 export default client;

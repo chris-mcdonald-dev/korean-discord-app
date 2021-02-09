@@ -1,12 +1,12 @@
 # Messages
 
-Every messages sent by the bot *should* be declared in `/src/messages` as an object. *
+Every message sent by the bot *should* be declared in `/src/messages` as an object. *
 The message object *must* respect the following structure. 
 
 ## Message structure
 
 The bot supports the following fields: 
-```json
+```json5
 {
     content: string,        // the content of the reply
     title: string,          // the title of the embed message
@@ -14,7 +14,7 @@ The bot supports the following fields:
     description: string,    // the description of the embed message
     fields: string,         // he fields of the embed message
     color: string,          // the color of the embed message
-    withAuthor: bool        // display author on the embed message
+    withAuthor: bool,       // display author on the embed message
     url: string             // the url of the embed message title
 }
 ```
