@@ -3,8 +3,7 @@ import {databaseConfig} from './config';
 import 'dotenv/config';
 import '../models';
 
-/* Initialize database connection
-______________________________________________________________________________________________________________________*/
+// Initialize database connection
 console.info('Connection to database...');
 const database = mongoose
     .connect(process.env.DATABASE_URI, databaseConfig)

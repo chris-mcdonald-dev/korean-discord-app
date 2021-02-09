@@ -2,8 +2,7 @@ import Discord from 'discord.js';
 import {clientConfig} from './config';
 import 'dotenv/config';
 
-/* Initialize Discord client
-______________________________________________________________________________________________________________________*/
+// Initialize Discord client
 const client = new Discord.Client(clientConfig);
 console.info('Connection to Discord...');
 client
