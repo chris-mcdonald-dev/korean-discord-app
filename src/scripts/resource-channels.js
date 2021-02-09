@@ -1,64 +1,67 @@
 const { mute } = require("./users/permissions");
 const { logMessageDate } = require("./utilities");
+const { User } = require("./users/user-utilities");
 
 const timeLimit = 120000;
 const warnOn = 3;
 const muteOn = 4;
+global.temp = {};
 
 // Spam Observer
-function resourcesObserver(message, counter, client) {
-	// if (message.member.hasPermission("MANAGE_ROLES")) return;
+function resourcesObserver(message, users, client) {
+	if (message.member.hasPermission("MANAGE_ROLES")) return;
 
-	// Initializes user-specific variables if undefined.
+	const id = message.author.id;
+	const name = message.author.username;
 	const channelName = message.channel.name;
-	const userReference = message.author.username + " " + message.author.id;
-	counter = createUserCounter(counter, userReference, channelName);
 
-	let timeout;
-	function startTimeout() {
-		timeout = setTimeout(() => {
-			counter[userReference][message.channel.name].count = 0;
-			counter[userReference][message.channel.name].timeoutFlag = false;
-		}, timeLimit);
-	}
-	// Resets user-specific counter variable after timeout
-	if (counter[userReference][message.channel.name].timeoutFlag === false) {
-		counter[userReference][message.channel.name].timeoutFlag = true;
-		startTimeout();
-	} else {
-		clearTimeout(timeout);
-		startTimeout();
-	}
+	// Initializes new User instance if not defined.
+	users[id] = users[id] || new User(name, id);
+	users[id].addChannelMsg(message);
 
-	counter[userReference][message.channel.name].count++;
+	users[id].channels[channelName].count++;
 
-	console.log(`${message.author.username}'s Message number: ${counter[userReference][message.channel.name].count}`);
-
-	const userParams = { counter, userReference, channelName, message, client };
-	checkCount(userParams);
+	const params = { users, id, channelName, message, client };
+	checkTimeoutFlag(params);
+	checkCount(params);
+	console.dir(users, { depth: null });
 }
 
-function createUserCounter(counter, userReference, channelName) {
-	counter[userReference] = counter[userReference] || {
-		[channelName]: {
-			timeoutFlag: false,
-			count: 0,
-		},
-	};
-	return counter;
-}
-
-function checkCount(userParams) {
-	const { counter, userReference, channelName, message, client } = userParams;
-	if (counter[userReference][channelName].count === warnOn) {
+// Checks count and warns or mutes accordingly
+function checkCount(params) {
+	const { users, id, channelName, message, client } = params;
+	if (users[id].channels[channelName].count === warnOn) {
 		logMessageDate();
 		resourceChannelWarning(message, client);
 	}
-	if (counter[userReference][channelName].count === muteOn) {
+	if (users[id].channels[channelName].count === muteOn) {
 		logMessageDate();
 		mute(message);
 		resourcesMuteMessage(message, client);
 	}
+}
+
+// Check if message cooldown time is up (shown by timeoutFlag)
+function checkTimeoutFlag(params) {
+	const { users, id, channelName } = params;
+	const timeoutKey = id + channelName;
+	if (!users[id].channels[channelName].timeoutFlag) {
+		users[id].channels[channelName].timeoutFlag = true;
+		startTimeout(params, timeoutKey);
+	} else {
+		clearTimeout(global.temp[timeoutKey]);
+		startTimeout(params, timeoutKey);
+	}
+}
+
+// Resets user-specific counter variable after timeout
+function startTimeout(params, timeoutKey) {
+	const { users, id, channelName } = params;
+	const timeout = setTimeout(() => {
+		users[id].channels[channelName].count = 0;
+		users[id].channels[channelName].timeoutFlag = false;
+	}, timeLimit);
+	global.temp[timeoutKey] = timeout;
 }
 
 //Warns User
