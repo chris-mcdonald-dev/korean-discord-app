@@ -3,32 +3,37 @@ const { logMessageDate } = require("./utilities");
 
 const koreanRegEx = /[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g;
 
-function koreanObserver(message, counter, client) {
-	if (message.member.hasPermission("MANAGE_ROLES")) return;
+function koreanObserver(message, chnlMsgs, client) {
+	// if (message.member.hasPermission("MANAGE_ROLES")) return;
 	client.channels
 		.fetch(process.env.KOREAN_CHANNEL)
 		.then((channel) => {
-			counter[channel.name] = counter[channel.name] || {};
-			counter[channel.name].count = counter[channel.name].count || 0;
+			chnlMsgs[channel.name] = chnlMsgs[channel.name] || {
+				count: 0,
+			};
 
-			// Checks if message has Korean
-			if (koreanRegEx.test(message.content)) {
-				counter[channel.name].count = 0;
-				return;
-			}
+			koreanMsgCheck(message, chnlMsgs, channel);
 
 			// Logs time
 			logMessageDate();
 
-			counter[channel.name].count++;
-			console.log(`There have been: ${counter[channel.name].count} English messages sent in the practice-korean channel.`);
-			if (counter[channel.name].count === 8) koreanChannelWarning(message, client);
-			if (counter[channel.name].count > 9) {
+			chnlMsgs[channel.name].count++;
+
+			if (chnlMsgs[channel.name].count === 8) koreanChannelWarning(message, client);
+			if (chnlMsgs[channel.name].count > 9) {
 				mute(message);
 				koreanChannelMute(message, client);
 			}
 		})
 		.catch(console.error);
+}
+
+// Checks if message has Korean
+function koreanMsgCheck(message, chnlMsgs, channel) {
+	if (koreanRegEx.test(message.content)) {
+		chnlMsgs[channel.name].count = 0;
+		return;
+	}
 }
 
 function koreanChannelWarning(message, client) {
