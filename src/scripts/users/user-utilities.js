@@ -38,4 +38,20 @@ function regularQualifyCheck(message) {
 	});
 }
 
-module.exports = { regularQualifyCheck };
+class User {
+	constructor(name, id) {
+		this.name = name;
+		this.id = id;
+		this.channels = [];
+	}
+
+	addChannelMsg(message) {
+		const name = message.channel.name;
+		this.channels[name] = this.channels[name] || {
+			timeoutFlag: false,
+			count: 0,
+		};
+	}
+}
+
+module.exports = { regularQualifyCheck, User };
