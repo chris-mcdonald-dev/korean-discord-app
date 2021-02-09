@@ -10,9 +10,9 @@
     "forever:stop": "forever stop lib/index.js || exit 0",
     "prestart": "npm run build && npm run forever:stop",
     "start": "npm run forever:start",
-    "test:lint": "eslint ./src",
-    "test:prettier": "prettier --check ./src/**/*.js",
-    "test": "npm run test:lint && npm run test:prettier"
+    "validate:lint": "eslint ./src",
+    "validate:format": "prettier --check ./src/**/*.js",
+    "validate": "npm run validate:lint && npm run validate:format"
   },
   "author": "Chris McDonald",
   "license": "ISC",
