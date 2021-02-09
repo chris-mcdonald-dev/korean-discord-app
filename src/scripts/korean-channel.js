@@ -4,7 +4,7 @@ const { logMessageDate } = require("./utilities");
 const koreanRegEx = /[\uac00-\ud7af]|[\u1100-\u11ff]|[\u3130-\u318f]|[\ua960-\ua97f]|[\ud7b0-\ud7ff]/g;
 
 function koreanObserver(message, chnlMsgs, client) {
-	// if (message.member.hasPermission("MANAGE_ROLES")) return;
+	if (message.member.hasPermission("MANAGE_ROLES")) return;
 	client.channels
 		.fetch(process.env.KOREAN_CHANNEL)
 		.then((channel) => {
