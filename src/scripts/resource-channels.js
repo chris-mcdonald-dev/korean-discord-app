@@ -7,7 +7,7 @@ const warnOn = 3;
 const muteOn = 4;
 const timeouts = {};
 
-// Spam Observer
+// Resource Channel Spam Observer
 function resourcesObserver(message, users, client) {
 	if (message.member.hasPermission("MANAGE_ROLES")) return;
 
@@ -24,7 +24,6 @@ function resourcesObserver(message, users, client) {
 	const params = { users, id, channelName, message, client };
 	checkTimeoutFlag(params);
 	checkCount(params);
-	console.dir(users, { depth: null });
 }
 
 // Checks count and warns or mutes accordingly
@@ -73,7 +72,7 @@ function resourceChannelWarning(message, client) {
 		.catch(console.error);
 }
 
-//Mutes User
+//Sends message informing user they've been muted
 function resourcesMuteMessage(message, client) {
 	client.channels
 		.fetch(process.env.CHAT_CHANNEL)
