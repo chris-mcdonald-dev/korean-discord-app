@@ -19,7 +19,7 @@ function resourcesObserver(message, users, client) {
 	users[id] = users[id] || new User(name, id);
 	users[id].addChannelMsg(message);
 
-	users[id].channels[channelName].count++;
+	users[id].incrementCount(channelName);
 
 	const params = { users, id, channelName, message, client };
 	checkTimeoutFlag(params);
@@ -29,11 +29,11 @@ function resourcesObserver(message, users, client) {
 // Checks count and warns or mutes accordingly
 function checkCount(params) {
 	const { users, id, channelName, message, client } = params;
-	if (users[id].channels[channelName].count === warnOn) {
+	if (users[id].getCount(channelName) === warnOn) {
 		logMessageDate();
 		resourceChannelWarning(message, client);
 	}
-	if (users[id].channels[channelName].count === muteOn) {
+	if (users[id].getCount(channelName) === muteOn) {
 		logMessageDate();
 		mute(message);
 		resourcesMuteMessage(message, client);
@@ -44,8 +44,8 @@ function checkCount(params) {
 function checkTimeoutFlag(params) {
 	const { users, id, channelName } = params;
 	const userChannelKey = id + channelName; // Key to access appropriate timeout
-	if (!users[id].channels[channelName].timeoutFlag) {
-		users[id].channels[channelName].timeoutFlag = true;
+	if (!users[id].getTimeoutFlag(channelName)) {
+		users[id].setTimeoutFlag(channelName, true);
 		startTimeout(params, userChannelKey);
 	} else {
 		clearTimeout(timeouts[userChannelKey]);
@@ -57,8 +57,8 @@ function checkTimeoutFlag(params) {
 function startTimeout(params, userChannelKey) {
 	const { users, id, channelName } = params;
 	timeouts[userChannelKey] = setTimeout(() => {
-		users[id].channels[channelName].count = 0;
-		users[id].channels[channelName].timeoutFlag = false;
+		users[id].resetCount(channelName);
+		users[id].setTimeoutFlag(channelName, false);
 	}, timeLimit);
 }
 

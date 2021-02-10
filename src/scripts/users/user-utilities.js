@@ -52,6 +52,23 @@ class User {
 			count: 0,
 		};
 	}
+
+	incrementCount(name) {
+		this.channels[name].count++;
+	}
+	resetCount(name) {
+		this.channels[name].count = 0;
+	}
+	getCount(name) {
+		return this.channels[name].count;
+	}
+
+	setTimeoutFlag(name, flag) {
+		this.channels[name].timeoutFlag = flag;
+	}
+	getTimeoutFlag(name) {
+		return this.channels[name].timeoutFlag;
+	}
 }
 
 module.exports = { regularQualifyCheck, User };
