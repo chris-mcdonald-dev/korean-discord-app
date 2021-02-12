@@ -2,7 +2,7 @@
 
 /* --------------------------------------- */
 
-const { getWeeklyVocab, getOldVocab } = require("./vocab/google-sheets-conn");
+const GoogleSheets = require("./vocab/google-sheets-conn");
 
 /* ____________ Main Typing Game Function ____________ */
 
@@ -29,7 +29,7 @@ async function typingGame(message, client) {
 		/* Immediately sets listener flag to true at the start of each round */
 		global.typingGame.listenerFlag = true;
 
-		const [max, seed, key, definition] = await getVocab();
+		const { word, definition } = await getVocab();
 
 		if (!global.tgFirstRoundStarted) {
 			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this word in Korean then!`), 1000);
@@ -47,18 +47,18 @@ async function typingGame(message, client) {
 
 			// Send Korean vocab word to chat
 			global.typingGameTimeout = setTimeout(async () => {
-				await message.channel.send(`**${key}** - (${definition})`);
+				await message.channel.send(`**${word}** - (${definition})`);
 				global.typingGame.startTime = Date.now() + 500;
 				// 500 ms to approximately account for slight latency
 			}, 7200);
 		} else {
-			await message.channel.send(`**${key}** - (${definition})`);
+			await message.channel.send(`**${word}** - (${definition})`);
 			global.typingGame.startTime = Date.now() + 500;
 		}
 
 		// Sets flag showing first round started to true
 		global.tgFirstRoundStarted = true;
-		global.typingGameKey = key;
+		global.typingGameKey = word;
 	} catch (error) {
 		console.log(error);
 		return;
@@ -67,23 +67,12 @@ async function typingGame(message, client) {
 /* ------------------------------------------- */
 
 async function getVocab() {
-	const vocabWords = await getOldVocab();
-	const weeklyVocab = await getWeeklyVocab();
 	// Pulls random word from vocabWords
-	const oldOrNewVocab = Math.floor(Math.random() * Math.floor(4)); //Determines whether user gets old or new vocab
-	if (oldOrNewVocab < 1) {
-		const max = Object.keys(vocabWords).length;
-		const seed = Math.floor(Math.random() * Math.floor(max));
-		const key = Object.keys(vocabWords)[seed];
-		const definition = vocabWords[key];
-		return [max, seed, key, definition];
-	} else {
-		const max = Object.keys(weeklyVocab).length;
-		const seed = Math.floor(Math.random() * Math.floor(max));
-		const key = Object.keys(weeklyVocab)[seed];
-		const definition = weeklyVocab[key];
-		return [max, seed, key, definition];
-	}
+	const oldOrNewVocab = Math.floor(Math.random() * 4); //Determines whether user gets old or new vocab
+	const range = oldOrNewVocab < 1 ? "Old Vocab!A2:B" : "Weekly Vocab!A2:B";
+	const vocabList = await GoogleSheets.getVocab(range);
+	const seed = Math.floor(Math.random() * vocabList.length);
+	return vocabList[seed];
 }
 
 /* _________________ Listens for messages from participants ___________________ */
