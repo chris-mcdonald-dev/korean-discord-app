@@ -13,11 +13,11 @@ gClient.authorize((err, tokens) => {
 	}
 });
 
-async function getWeeklyVocab() {
+async function getVocab(range) {
 	const gSheetsAPI = google.sheets({ version: "v4", auth: gClient });
 	const request = {
 		spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-		range: "Weekly Vocab!A2:B",
+		range
 	};
 
 	const weeklyVocabWords = await gSheetsAPI.spreadsheets.values.get(request);
@@ -25,25 +25,12 @@ async function getWeeklyVocab() {
 	return result;
 }
 
-async function getOldVocab() {
-	const gSheetsAPI = google.sheets({ version: "v4", auth: gClient });
-	const request = {
-		spreadsheetId: process.env.GOOGLE_SPREADSHEET_ID,
-		range: "Old Vocab!A2:B",
-	};
-
-	const oldVocabWords = await gSheetsAPI.spreadsheets.values.get(request);
-	const result = parseVocab(oldVocabWords.data.values);
-	return result;
-}
-
 // Convert fetched vocab arrays into an object
 function parseVocab(result) {
-	const vocabObject = {};
-	result.forEach((elem) => {
-		vocabObject[elem[0]] = elem[1];
-	});
-	return vocabObject;
+	return result.map((elem) => ({
+		key: elem[0],
+		value: elem[1]
+	}));
 }
 
-module.exports = { getWeeklyVocab, getOldVocab, gClient };
+module.exports = { getVocab, gClient };
