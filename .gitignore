@@ -1,6 +1,6 @@
 .env
 .idea
-*.bat
+/git_ignore
 /node_modules
 package-lock.json
 lib
