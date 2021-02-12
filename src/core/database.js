@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import {databaseConfig} from './config';
-import 'dotenv/config';
 import '../models';
 
 // Initialize database connection

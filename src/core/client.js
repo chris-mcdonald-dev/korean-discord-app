@@ -1,6 +1,5 @@
 import Discord from 'discord.js';
 import {clientConfig} from './config';
-import 'dotenv/config';
 
 // Initialize Discord client
 const client = new Discord.Client(clientConfig);

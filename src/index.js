@@ -1,7 +1,7 @@
 /* ___________ REQUIRE CORE DEPENDENCIES AND CONFIG FILES ___________ */
 
-import {client} from './core';
 import 'dotenv/config';
+import {client} from './core';
 
 /* ------------------------------------------------------- */
 
