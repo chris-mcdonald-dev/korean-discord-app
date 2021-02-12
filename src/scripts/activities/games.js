@@ -1,113 +1,12 @@
 /* ________________ Vocab Words _______________ */
 
-const vocabWords = {
-	나: "I / Me",
-	회사원: "Employee of a company",
-	너무: "Too / Very",
-	바쁘다: "To be busy",
-	우리: "We / Our",
-	보통: "Usually / Usual / Regular",
-	주말: "Weekend",
-	만나다: "To meet",
-	영화: "Movie",
-	카페: "Cafe",
-	매일: "Everyday",
-	일찍: "Early",
-	일어나다: "To get up / To wake up",
-	물: "Water",
-	마시다: "To drink",
-	세수하다: "To wash your face",
-	옷: "Clothes",
-	입다: "To wear / To put on (clothes)",
-	화장: "Make-up",
-	회사: "Company",
-	시험: "Test / Exam",
-	의자: "Chair",
-	책상: "Desk",
-	더럽다: "Dirty",
-	위: "Up / Top / Above",
-	청소: "Cleaning",
-	청소하다: "To clean",
-	깨끗하다: "To be clean",
-	공책: "Notebook",
-	필통: "Pencil Case",
-	시작하다: "To begin / To start",
-	연락하다: "To contact (someone)",
-	타다: "To ride (a bus/subway/car)",
-	나오다: "To come out",
-	나가다: "To go out",
-	들어오다: "To come in",
-	들어가다: "To go in",
-	사진: "A photograph",
-	찍다: "To take (a picture)",
-	올해: "This year",
-	상황: "A situation",
-	한가하다: "To be free / To have time",
-	받다: "To receive / To get (something)",
-	주다: "To give (something)",
-	머리: "Head / Hair",
-	허리: "Back / Waist",
-	목: "Neck",
-	손: "Hand",
-	팔: "Arm",
-	다리: "Leg",
-	발: "Foot",
-	배: "Stomach",
-	배고프다: "To be hungry",
-	배부르다: "To be full",
-	다치다: "To get hurt",
-	아프다: "To hurt / be sick",
-	신발: "Shoe",
-	"목이 마르다": "To be thirsty",
-	빵: "Bread",
-	음료수: "Beverage",
-	"좋은 아침이에요": "Good morning",
-	아까: "Earlier",
-	아침: "Morning (Breakfast)",
-	점심: "Lunch",
-	저녁: "Evening (Dinner)",
-	"잘 자다": "To sleep well",
-	"잘 먹겠습니다": "I will eat well",
-	먹다: "To eat",
-	피곤하다: "To be tired, exhausted",
-	아름답다: "To be beautiful",
-	덥다: "To be hot (regarding weather)",
-	나무: "Tree",
-	춥다: "To be cold",
-	산: "Mountain",
-	강: "River",
-	산책하다: "To take a walk, stroll",
-	"해가 뜨다": "To rise (sunrise)",
-	"해가 지다": "To set (sunset)",
-	과일: "Fruits",
-	무지개: "Rainbow",
-	생선: "Fish (that we eat)",
-	회색: "Grey",
-	버섯: "Mushroom",
-	빨간색: "Red",
-	치즈: "Cheese",
-	노란색: "Yellow",
-	샐러드: "Salad",
-	녹색: "Green",
-};
-
-const weeklyVocab = {
-	여권: "Passport",
-	비행기: "Airplane",
-	공항: "Airport",
-	지하철: "Subway / Metro",
-	택시: "Taxi",
-	지도: "Map",
-	숙소: "Lodging",
-	탑승: "Boarding",
-	대기: "Stand-by / Wait",
-	신분증: "ID",
-};
 /* --------------------------------------- */
+
+const { getWeeklyVocab, getOldVocab } = require("./vocab/google-sheets-conn");
 
 /* ____________ Main Typing Game Function ____________ */
 
-function typingGame(message, client) {
+async function typingGame(message, client) {
 	if (message.channel.id !== process.env.EXERCISES_CHANNEL) {
 		client.channels.fetch(process.env.EXERCISES_CHANNEL).then((exerciseChannel) => {
 			message.reply(`Psst...I think you meant to send this in the ${exerciseChannel} channel.\nBut don't worry, no one noticed!`);
@@ -130,7 +29,7 @@ function typingGame(message, client) {
 		/* Immediately sets listener flag to true at the start of each round */
 		global.typingGame.listenerFlag = true;
 
-		const [max, seed, key, definition] = getVocab();
+		const [max, seed, key, definition] = await getVocab();
 
 		if (!global.tgFirstRoundStarted) {
 			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this word in Korean then!`), 1000);
@@ -147,13 +46,13 @@ function typingGame(message, client) {
 			);
 
 			// Send Korean vocab word to chat
-			global.typingGameTimeout = setTimeout(() => {
-				message.channel.send(`**${key}** - (${definition})`);
-				// 500 ms to approximately account for slight latency
+			global.typingGameTimeout = setTimeout(async () => {
+				await message.channel.send(`**${key}** - (${definition})`);
 				global.typingGame.startTime = Date.now() + 500;
+				// 500 ms to approximately account for slight latency
 			}, 7200);
 		} else {
-			message.channel.send(`**${key}** - (${definition})`);
+			await message.channel.send(`**${key}** - (${definition})`);
 			global.typingGame.startTime = Date.now() + 500;
 		}
 
@@ -167,7 +66,9 @@ function typingGame(message, client) {
 }
 /* ------------------------------------------- */
 
-function getVocab() {
+async function getVocab() {
+	const vocabWords = await getOldVocab();
+	const weeklyVocab = await getWeeklyVocab();
 	// Pulls random word from vocabWords
 	const oldOrNewVocab = Math.floor(Math.random() * Math.floor(4)); //Determines whether user gets old or new vocab
 	if (oldOrNewVocab < 1) {
@@ -296,7 +197,7 @@ function gameExplanation(message) {
 		}, 10000);
 	}
 	function sendResponse(message) {
-		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n- ***OR*** -\n`!t`");
+		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n\n- ***OR*** -\n\n`!t`  or  `!ㅌ`");
 	}
 }
 /* ------------------------------------------------- */
