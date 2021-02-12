@@ -4,18 +4,20 @@
   "description": "Little Lyon Heart",
   "main": "src/index.js",
   "scripts": {
-    "build": "babel src -d lib",
+    "build": "babel src -d lib --copy-files",
     "dev": "nodemon --exec babel-node src/index.js",
     "forever:start": "forever start lib/index.js",
     "forever:stop": "forever stop lib/index.js || exit 0",
     "prestart": "npm run build && npm run forever:stop",
-    "start": "npm run forever:start"
+    "start": "npm run forever:start",
+    "validate:lint": "eslint ./src",
+    "validate:format": "prettier --check ./src/**/*.js",
+    "validate": "npm run validate:lint && npm run validate:format"
   },
   "author": "Chris McDonald",
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.1",
-    "dotenv": "^8.2.0",
     "mongoose": "^5.11.8",
     "node-cron": "^2.0.3"
   },
@@ -25,6 +27,15 @@
     "@babel/node": "^7.12.10",
     "@babel/plugin-proposal-throw-expressions": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
-    "nodemon": "^2.0.7"
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-config-node": "^4.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.3.8",
+    "nodemon": "^2.0.7",
+    "prettier": "^1.19.1"
   }
 }

@@ -1,10 +1,7 @@
 /* ___________ REQUIRE CORE DEPENDENCIES AND CONFIG FILES ___________ */
 
-const Discord = require("discord.js");
-require("dotenv").config();
-require("./database");
-import "core-js/stable";
-import "regenerator-runtime/runtime";
+import 'dotenv/config';
+import {client} from './core';
 
 /* ------------------------------------------------------- */
 
@@ -19,12 +16,10 @@ const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./script
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
-const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
-const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
 const counter = {}; // Message counter object for users
 global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
@@ -33,7 +28,6 @@ global.tgFirstRoundStarted = false; // Flag for Typing Game below
 
 client.on("ready", () => {
 	console.log("\nLittle LyonHeart ♡ is online.\n");
-	runScheduler(client);
 	client.guilds
 		.fetch(process.env.SERVER_ID) //server ID
 		.then((guild) => {

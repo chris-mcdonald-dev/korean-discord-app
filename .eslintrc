@@ -1,0 +1,13 @@
+{
+  "extends": ["node", "prettier"],
+  "plugins": ["prettier"],
+  "settings": {
+    "import/resolver": {
+      "node": {"extensions": [".js"]}
+    }
+  },
+  "rules": {
+    "import/prefer-default-export": "off",
+    "prettier/prettier": ["error"]
+  }
+}

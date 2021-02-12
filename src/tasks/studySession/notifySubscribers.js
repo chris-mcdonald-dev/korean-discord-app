@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { notifySubscribers } from '../..//scripts/activities/study-session';
+import { notifySubscribers } from '../../scripts/activities/study-session';
 const StudySession = mongoose.model("StudySession");
 
 // Notify study session's subscribers one hour before the beginning of the session
