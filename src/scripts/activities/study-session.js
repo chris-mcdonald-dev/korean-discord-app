@@ -54,7 +54,7 @@ function createStudySession(message) {
 	const studySession = getStudySession(message);
 	// Check if studySession is a promise
 	if (typeof studySession.then === "function") return null;
-	StudySession.create(studySession)
+	return StudySession.create(studySession)
 		.then(() => {
 			replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession));
 			react(message, null, ["⭐", "❌"]);
@@ -63,7 +63,7 @@ function createStudySession(message) {
 }
 
 function getUpcomingStudySessions(message) {
-	StudySession.find({ startDate: { $gt: new Date() } }, null, { sort: "startDate" }, (error, studySessions) => {
+	return StudySession.find({ startDate: { $gt: new Date() } }, null, { sort: "startDate" }, (error, studySessions) => {
 		if (error) return replyError(message, STUDY_SESSION.UPCOMING.ERROR(error));
 		if (studySessions.length === 0) return replyError(message, STUDY_SESSION.UPCOMING.NOT_FOUND);
 		return replySuccess(message, STUDY_SESSION.UPCOMING.SUCCESS(studySessions));
@@ -71,19 +71,19 @@ function getUpcomingStudySessions(message) {
 }
 
 function subscribeStudySession(message, user) {
-	StudySession.findOneAndUpdate({ "message.id": message.id }, { $push: { subscribersId: user.id } })
+	return StudySession.findOneAndUpdate({ "message.id": message.id }, { $push: { subscribersId: user.id } })
 		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
 		.catch((error) => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
 }
 
 function unsubscribeStudySession(message, user) {
-	StudySession.findOneAndUpdate({ "message.id": message.id }, { $pull: { subscribersId: user.id } })
+	return StudySession.findOneAndUpdate({ "message.id": message.id }, { $pull: { subscribersId: user.id } })
 		.then(() => sendDirectMessage(user, STUDY_SESSION.UNSUBSCRIBE.SUCCESS(message.author, user)))
 		.catch((error) => sendDirectMessage(user, STUDY_SESSION.UNSUBSCRIBE.ERROR(user, error)));
 }
 
 function notifySubscribers(client, studySession) {
-	studySession.subscribersId.map((subscriberId) => {
+	return studySession.subscribersId.map((subscriberId) => {
 		return client.users
 			.fetch(subscriberId)
 			.then((subscriber) => {
@@ -95,7 +95,7 @@ function notifySubscribers(client, studySession) {
 
 function cancelConfirmationStudySession(message, user) {
 	if (message.author.id !== user.id) return replyError(message, STUDY_SESSION.CANCEL.UNAUTHORIZED);
-	replySurvey(message, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
+	return replySurvey(message, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
 		.then((result) => {
 			switch (result) {
 				case "✅":

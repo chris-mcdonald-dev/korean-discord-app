@@ -9,7 +9,8 @@
     "forever:start": "forever start lib/index.js",
     "forever:stop": "forever stop lib/index.js || exit 0",
     "prestart": "npm run build && npm run forever:stop",
-    "start": "npm run forever:start"
+    "start": "npm run forever:start",
+    "test": "mocha 'test' -r esm --recursive --exit"
   },
   "author": "Chris McDonald",
   "license": "ISC",
@@ -25,6 +26,9 @@
     "@babel/node": "^7.12.10",
     "@babel/plugin-proposal-throw-expressions": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
+    "chai": "^4.3.0",
+    "esm": "^3.2.25",
+    "mocha": "^8.3.0",
     "nodemon": "^2.0.7"
   }
 }
