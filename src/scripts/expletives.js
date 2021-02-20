@@ -18,7 +18,6 @@ const expletives = {
 	wanker: "phlonominium",
 	bich: "plinimal",
 	cock: "phloopdie",
-	slut: "phliminustrim",
 };
 const strictExpletives = {
 	hoe: "phloshdradomous",
@@ -40,29 +39,47 @@ function explicitWordFilter(message) {
 
 /* Checks if message has expletives */
 function check(message) {
-	global.contentArray = message.content.split(/([^\w])/);
-	// Filters out null indexes of array.
-	const noNulls = global.contentArray.filter(Boolean);
+	global.contentArray = message.content.split(" ");
 
 	let foundExpletive = false;
-	noNulls.forEach((word, index) => {
+	global.contentArray.forEach((word, index) => {
+		if (word.length < 2) {
+			return;
+		}
+		word = deleet(word);
 		/* Filters out any string that includes expletive */
 		Object.keys(expletives).forEach((key, v) => {
-			if (word.includes(key)) {
+			if (word.toLowerCase().includes(key.toLowerCase())) {
 				foundExpletive = true;
-				noNulls[index] = expletives[key];
+				global.contentArray[index] = expletives[key];
 			}
 		});
 		/* Only filters out exact matches for strictExpletives */
 		Object.keys(strictExpletives).forEach((key, v) => {
-			if (word === key) {
+			if (word.toLowerCase() === key.toLowerCase()) {
 				foundExpletive = true;
-				noNulls[index] = strictExpletives[key];
+				global.contentArray[index] = strictExpletives[key];
 			}
 		});
 	});
-	global.newMessage = noNulls.join("");
+	global.newMessage = global.contentArray.join(" ");
 	return foundExpletive;
+}
+
+function deleet(word) {
+	return word
+		.replace(/\$/g, "s")
+		.replace(/5/g, "s")
+		.replace(/8/g, "b")
+		.replace(/\#/g, "h")
+		.replace(/vv/g, "w")
+		.replace(/\@/g, "a")
+		.replace(/4/g, "a")
+		.replace(/3/g, "e")
+		.replace(/7/g, "t")
+		.replace(/\!/g, "i")
+		.replace(/1/g, "i")
+		.replace(/0/g, "o");
 }
 
 /* ----------------- TO DO ----------------- */
