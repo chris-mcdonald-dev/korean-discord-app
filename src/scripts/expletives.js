@@ -18,7 +18,7 @@ const expletives = {
 	wanker: "phlonominium",
 	bich: "plinimal",
 	cock: "phloopdie",
-	slut:  "phliminustrim",
+	slut: "phliminustrim",
 };
 const strictExpletives = {
 	hoe: "phloshdradomous",
