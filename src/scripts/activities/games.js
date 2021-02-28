@@ -99,9 +99,6 @@ const vocabWords = {
 	탑승: "Boarding",
 	대기: "Stand-by / Wait",
 	신분증: "ID",
-};
-
-const weeklyVocab = {
 	바다: "Ocean",
 	수영: "Swimming",
 	해변: "Beach",
@@ -112,6 +109,19 @@ const weeklyVocab = {
 	"안전 요원": "Lifeguard",
 	모래성: "Sandcastle",
 	비치타월: "Beach towel"
+};
+
+const weeklyVocab = {
+	가게: "Shop / Store",
+	가격표: "Price tag",
+	서점: "Bookstore",
+	편의점: "Convenience store",
+	마트: "Mart",
+	백화점: "Department store",
+	입어보다: "To try something on",
+	내다: "To pay",
+	"신용 카드": "Credit card",
+	"체크 카드": "Debit card"
 };
 /* --------------------------------------- */
 
