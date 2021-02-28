@@ -89,9 +89,6 @@ const vocabWords = {
 	노란색: "Yellow",
 	샐러드: "Salad",
 	녹색: "Green",
-};
-
-const weeklyVocab = {
 	여권: "Passport",
 	비행기: "Airplane",
 	공항: "Airport",
@@ -102,6 +99,19 @@ const weeklyVocab = {
 	탑승: "Boarding",
 	대기: "Stand-by / Wait",
 	신분증: "ID",
+};
+
+const weeklyVocab = {
+	바다: "Ocean",
+	수영: "Swimming",
+	해변: "Beach",
+	야자수: "Palm tree",
+	조개껍데기: "Seashell",
+	비키니: "Bikini",
+	쪼리: "Flip flop",
+	"안전 요원": "Lifeguard",
+	모래성: "Sandcastle",
+	비치타월: "Beach towel"
 };
 /* --------------------------------------- */
 
