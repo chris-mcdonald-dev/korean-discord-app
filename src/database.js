@@ -12,6 +12,6 @@ mongoose.connect(process.env.DATABASE_URI, {
     useUnifiedTopology: true,
     useFindAndModify: false
 })
-    .then(() => console.log("Connection etablished"))
+    .then(() => console.log("Connection established"))
     .catch((e) => console.log("MongoDB Connection error :" + e));
 /* ------------------------------------------------------- */
