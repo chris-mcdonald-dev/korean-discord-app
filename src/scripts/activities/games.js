@@ -108,10 +108,7 @@ const vocabWords = {
 	쪼리: "Flip flop",
 	"안전 요원": "Lifeguard",
 	모래성: "Sandcastle",
-	비치타월: "Beach towel"
-};
-
-const weeklyVocab = {
+	비치타월: "Beach towel",
 	가게: "Shop / Store",
 	가격표: "Price tag",
 	서점: "Bookstore",
@@ -122,6 +119,19 @@ const weeklyVocab = {
 	내다: "To pay",
 	"신용 카드": "Credit card",
 	"체크 카드": "Debit card"
+};
+
+const weeklyVocab = {
+	학교: "School",
+	학생: "Student",
+	교수: "Professor",
+	교실: "Classroom",
+	숙제: "Homework",
+	체육관: "Gymnasium",
+	수학: "Maths",
+	과학: "Science",
+	생물학: "Biology",
+	역사: "History"
 };
 /* --------------------------------------- */
 
