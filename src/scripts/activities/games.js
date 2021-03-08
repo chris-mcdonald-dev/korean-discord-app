@@ -118,10 +118,7 @@ const vocabWords = {
 	입어보다: "To try something on",
 	내다: "To pay",
 	"신용 카드": "Credit card",
-	"체크 카드": "Debit card"
-};
-
-const weeklyVocab = {
+	"체크 카드": "Debit card",
 	학교: "School",
 	학생: "Student",
 	교수: "Professor",
@@ -131,7 +128,23 @@ const weeklyVocab = {
 	수학: "Maths",
 	과학: "Science",
 	생물학: "Biology",
-	역사: "History"
+	역사: "History",
+};
+
+const weeklyVocab = {
+	기숙사: "Dormitory",
+	베개: "Pillow",
+	담요: "Blanket",
+	알람시계: "Alarm clock",
+	거울: "Mirror",
+	치약: "Toothpaste",
+	칫솔: "Toothbrush",
+	냉장고: "Refrigerator",
+	샤워실: "Shower",
+	소파: "Sofa",
+	온돌: "Heated floors",
+	보일러: "Heat/Heating",
+	에어컨: "Air conditioning (AC)",
 };
 /* --------------------------------------- */
 
