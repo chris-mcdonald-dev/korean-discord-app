@@ -14,7 +14,6 @@ function ping(message) {
 	setTimeout(() => {
 		message
 			.reply(" what do you want?")
-			.then(() => { })
 			.catch(console.error);
 		message.channel.stopTyping();
 	}, 7000);
@@ -66,6 +65,8 @@ function unPin50thMsg(channel) {
 				});
 			});
 		}
+	}).catch(function (error) {
+		console.log(error);
 	});
 }
 
@@ -75,6 +76,9 @@ function getAllChannels(client) {
 		client.channels
 			.fetch(chnl.id)
 			.then((fullChannel) => {
+				if (!fullChannel.members.get(client.user.id)) {
+					return;
+				}
 				if (fullChannel.type === "text") {
 					unPin50thMsg(fullChannel);
 				}
