@@ -23,6 +23,7 @@ const { typingGame, typingGameListener, endTypingGame, gameExplanation } = requi
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, updateStudySessionDetails } = require("./scripts/activities/study-session");
 const { convertBetweenTimezones } = require("./scripts/utility-commands/time-and-date");
 const { loadMessageReaction } = require("./utils/cache");
+const { handleRoleMessage, handleRoleMessageDelete, handleRolesOnReactionAdd, handleRolesOnReactionRemove } = require("./scripts/users/role-manager");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
 
@@ -155,6 +156,8 @@ client.on("message", (message) => {
 		convertBetweenTimezones(message);
 		return;
 	}
+
+	handleRoleMessage(message);
 });
 /* --------------------------------------------------- */
 
@@ -173,6 +176,8 @@ client.on("messageDelete", (message) => {
 		cancelStudySessionFromDeletion(message);
 		return;
 	}
+
+	handleRoleMessageDelete(message);
 });
 
 /* ________________ MAIN MESSAGE REACTION ADD LISTENER ________________ */
@@ -199,6 +204,8 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 
 	// Subscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") subscribeStudySession(message, user);
+
+	handleRolesOnReactionAdd(user, message, emoji);
 });
 /* --------------------------------------------------- */
 
@@ -220,6 +227,8 @@ client.on("messageReactionRemove", async (messageReaction, user) => {
 
 	// Unsubscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") unsubscribeStudySession(message, user);
+
+	handleRolesOnReactionRemove(user, message, emoji);
 });
 /* --------------------------------------------------- */
 
