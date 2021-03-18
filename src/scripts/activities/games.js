@@ -145,18 +145,18 @@ const vocabWords = {
 };
 
 const weeklyVocab = {
-채널: "Channel",
-뉴스: "News",
-인터넷: "Internet",
-음악: "Music",
-예술: "Art",
-보다: "To Watch",
-듣다: "To listen",
-읽다: "To read",
-티비: "TV",
-드라마: "TV Show",
-책: "Book",
-"예능 프로그램": "Variety show/program",
+	채널: "Channel",
+	뉴스: "News",
+	인터넷: "Internet",
+	음악: "Music",
+	예술: "Art",
+	보다: "To Watch",
+	듣다: "To listen",
+	읽다: "To read",
+	티비: "TV",
+	드라마: "TV Show",
+	책: "Book",
+	"예능 프로그램": "Variety show/program",
 };
 /* --------------------------------------- */
 
