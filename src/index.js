@@ -16,6 +16,7 @@ const { resourcesObserver } = require("./scripts/resource-channels");
 const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
+const { addBookmark, removeBookmark } = require("./scripts/bookmarks");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
@@ -145,6 +146,11 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
 
+	if (emoji.name === '🔖') {
+		addBookmark(user, message);
+		return;
+	}
+
 	// Subscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") subscribeStudySession(message, user);
 
@@ -163,6 +169,11 @@ client.on("messageReactionRemove", async (messageReaction, user) => {
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
+
+	if (emoji.name === '🔖') {
+		removeBookmark(client, user, message);
+		return;
+	}
 
 	// Unsubscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") unsubscribeStudySession(message, user);
