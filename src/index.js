@@ -25,7 +25,10 @@ const runScheduler = require("./scheduler").default;
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
 const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
-const counter = {}; // Message counter object for users
+
+const users = {}; // Message counter object for users
+const chnlMsgs = {}; // Separate message counter object unrelated to users
+
 global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
 
@@ -114,12 +117,12 @@ client.on("message", (message) => {
 	// Ensure long conversations in English aren't being had in Korean Channel
 	const channel = message.channel;
 	if (channel.id === process.env.KOREAN_CHANNEL) {
-		koreanObserver(message, counter, client);
+		koreanObserver(message, chnlMsgs, client);
 	}
 
 	// Ensure long conversations aren't being had in Resource Channel
 	if (channel.id === process.env.LINKS_CHANNEL) {
-		resourcesObserver(message, counter, client);
+		resourcesObserver(message, users, client);
 	}
 
 	// Create study session
