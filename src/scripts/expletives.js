@@ -19,55 +19,76 @@ const expletives = {
 	bich: "plinimal",
 	cock: "phloopdie",
 	slut: "phliminustrim",
+	썅놈: "포비",
+	썅년: "패티",
+	ㅄ: "크롱",
+	ㅈㄴ: "친구들모이게~",
+	ㅅㅂ: "힝나삐짐",
+	미친놈: "꼬마펭귄",
+	ㅁㅊ놈: "꼬마펭귄",
+	미친년: "내친구루피",
+	ㅁㅊ년: "내친구루피",
+	개새끼: "뽀로로",
 };
 const strictExpletives = {
 	hoe: "phloshdradomous",
 	chink: "phlomingoromous",
 	fk: "phlwflff",
 	시발: "힝나삐짐",
+	씨발: "힝나삐짐",
+	애미: "우리엄마사랑행",
+	존나: "친구들모이게~",
+	졸라: "친구들모이게~",
+	병신: "크롱",
 };
+
+let newMessage;
 
 // Expletive Filter
 function explicitWordFilter(message) {
 	if (check(message)) {
 		logMessageDate();
 		message.delete();
-		message.channel.send(`${message.author} wrote: "${global.newMessage}"`);
-		console.log(`Edited ${message.content} to ${global.newMessage}`);
+		message.channel.send(`${message.author} wrote: "${newMessage}"`);
+		console.log(`Edited ${message.content} to ${newMessage}`);
 		message.reply("\nHey! \nI said no bad words! If you don't want to play nice, I'm taking my ball and going home!");
 	}
 }
 
+/* Regex to capture both English and Korean words */
+const englishKoreanRegex = /([\w]+|[\x00-\x7F\x80-\xFF\u0100-\u017F\u0180-\u024F\u1E00-\u1EFF])/
+
 /* Checks if message has expletives */
 function check(message) {
-	global.contentArray = message.content.split(" ");
+	let contentArray = message.content.split(englishKoreanRegex);
 
 	let foundExpletive = false;
-	global.contentArray.forEach((word, index) => {
+	contentArray.forEach((word, index) => {
 		if (word.length < 2) {
 			return;
 		}
-		word = deleet(word);
+		word = replaceSymbols(word);
 		/* Filters out any string that includes expletive */
-		Object.keys(expletives).forEach((key, v) => {
+		Object.keys(expletives).forEach((key) => {
 			if (word.toLowerCase().includes(key.toLowerCase())) {
 				foundExpletive = true;
-				global.contentArray[index] = expletives[key];
+				contentArray[index] = expletives[key];
 			}
 		});
 		/* Only filters out exact matches for strictExpletives */
-		Object.keys(strictExpletives).forEach((key, v) => {
+		Object.keys(strictExpletives).forEach((key) => {
 			if (word.toLowerCase() === key.toLowerCase()) {
 				foundExpletive = true;
-				global.contentArray[index] = strictExpletives[key];
+				contentArray[index] = strictExpletives[key];
 			}
 		});
 	});
-	global.newMessage = global.contentArray.join(" ");
+	newMessage = contentArray.join("");
 	return foundExpletive;
 }
 
-function deleet(word) {
+/* Replaces characters used to get around expletive filters */
+function replaceSymbols(word) {
 	return word
 		.replace(/\$/g, "s")
 		.replace(/5/g, "s")
@@ -82,33 +103,5 @@ function deleet(word) {
 		.replace(/1/g, "i")
 		.replace(/0/g, "o");
 }
-
-/* ----------------- TO DO ----------------- */
-/* Make Korean Filter */
-// function checkKorean() {
-// 	global.contentArray = message.content.split(/([^\w])/);
-// 	// Filters out null indexes of array.
-// 	noNulls = global.contentArray.filter(Boolean);
-
-// 	console.log(`CONTENT ARRAY: ${noNulls}`);
-// 	foundExpletive = false;
-// 	noNulls.forEach((word, index) => {
-// 		Object.keys(expletives).forEach((key, v) => {
-// 			if (word.includes(key)) {
-// 				foundExpletive = true;
-// 				noNulls[index] = expletives[key];
-// 			}
-// 		});
-// 		Object.keys(strictExpletives).forEach((key, v) => {
-// 			if (word === key) {
-// 				foundExpletive = true;
-// 				noNulls[index] = strictExpletives[key];
-// 			}
-// 		});
-// 	});
-// 	global.newMessage = noNulls.join("");
-// 	return foundExpletive;
-// }
-/* ------------------------------------------------ */
 
 module.exports = { explicitWordFilter };
