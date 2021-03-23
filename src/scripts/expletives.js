@@ -19,6 +19,7 @@ const expletives = {
 	bich: "plinimal",
 	cock: "phloopdie",
 	slut: "phliminustrim",
+  whore: "phlungus",
 	썅놈: "포비",
 	썅년: "패티",
 	ㅄ: "크롱",
