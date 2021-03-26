@@ -52,17 +52,24 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
 	if (!message.guild) return; // Ignores DMs
-	const text = message.content.toLowerCase();
-	regularQualifyCheck(message);
-
-	// Sends typing game explanation to exercise channel
-	gameExplanation(message);
 
 	if (message.author.bot) {
 		if (message.type === "PINS_ADD") message.delete();
 		return; // Ignores messages from bots
 	}
 	if (message.type === "PINS_ADD") return; // Ignores PIN messages
+
+	const text = message.content.toLowerCase();
+
+	// Filters Explicit Words
+	if (explicitWordFilter(message)) {
+		return;
+	}
+
+	regularQualifyCheck(message);
+
+	// Sends typing game explanation to exercise channel
+	gameExplanation(message);
 	if (text.includes("http")) return; // Ignores all links
 	if (text.includes("wake up") && text.includes(process.env.CLIENT_ID)) {
 		// Bot's ID
@@ -100,9 +107,6 @@ client.on("message", (message) => {
 			typingGameListener(message, client);
 			break;
 	}
-
-	// Filters Explicit Words
-	explicitWordFilter(message);
 
 	// Manual unmute
 	if (text.includes("unmute <@!") || text.includes("unmute @")) {

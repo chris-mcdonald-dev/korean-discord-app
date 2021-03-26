@@ -19,7 +19,7 @@ const expletives = {
 	bich: "plinimal",
 	cock: "phloopdie",
 	slut: "phliminustrim",
-  	whore: "phlungus",
+	whore: "phlungus",
 	썅놈: "포비",
 	썅년: "패티",
 	ㅄ: "크롱",
@@ -53,7 +53,9 @@ function explicitWordFilter(message) {
 		message.channel.send(`${message.author} wrote: "${newMessage}"`);
 		console.log(`Edited ${message.content} to ${newMessage}`);
 		message.reply("\nHey! \nI said no bad words! If you don't want to play nice, I'm taking my ball and going home!");
+		return true;
 	}
+	return false;
 }
 
 /* Regex to capture both English and Korean words */
