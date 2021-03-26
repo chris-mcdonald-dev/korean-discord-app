@@ -9,7 +9,8 @@ const timeouts = {};
 
 // Resource Channel Spam Observer
 function resourcesObserver(message, users, client) {
-	if (message.member.hasPermission("MANAGE_ROLES")) return;
+	if (message.member.hasPermission("MANAGE_ROLES")) return; // Ignores admins
+	if (checkIfResource(message)) return;
 
 	const id = message.author.id;
 	const name = message.author.username;
@@ -31,7 +32,7 @@ function checkCount(users, id, channelName, message, client) {
 		logMessageDate();
 		resourceChannelWarning(message, client);
 	}
-	if (users[id].getCount(channelName) === muteOn) {
+	if (users[id].getCount(channelName) >= muteOn) {
 		logMessageDate();
 		mute(message);
 		resourcesMuteMessage(message, client);
@@ -76,6 +77,12 @@ function resourcesMuteMessage(message, client) {
 			message.reply(`Please use ${channel} for longer conversations. \nI hate to do it, but I had to mute you for a little while. :sob: \nDon't worry, you'll be able to post your study resources again after 1 minute!`);
 		})
 		.catch(console.error);
+}
+
+function checkIfResource(message) {
+	if (message.attachments.size) return true; // Ignores attachments
+	if (message.content.includes("http")) return true; // Ignores all links
+	return false;
 }
 
 module.exports = { resourcesObserver };

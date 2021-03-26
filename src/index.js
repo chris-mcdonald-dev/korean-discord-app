@@ -70,7 +70,7 @@ client.on("message", (message) => {
 
 	// Sends typing game explanation to exercise channel
 	gameExplanation(message);
-	if (text.includes("http")) return; // Ignores all links
+	
 	if (text.includes("wake up") && text.includes(process.env.CLIENT_ID)) {
 		// Bot's ID
 		ping(message);
