@@ -29,6 +29,15 @@ const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
 
 const users = {}; // Message counter object for users
 const chnlMsgs = {}; // Separate message counter object unrelated to users
+function isMessageIgnored(message) {
+	if (!message.guild) return true; // Ignores DMs
+	if (message.author.bot) {
+		if (message.type === "PINS_ADD") message.delete();
+		return true; // Ignores messages from bots
+	}
+	if (message.type === "PINS_ADD") return true; // Ignores PIN messages
+	return false;
+}
 
 global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
@@ -51,14 +60,7 @@ client.on("ready", () => {
 /* ________________ MAIN MESSAGE LISTENER ________________ */
 
 client.on("message", (message) => {
-	if (!message.guild) return; // Ignores DMs
-
-	if (message.author.bot) {
-		if (message.type === "PINS_ADD") message.delete();
-		return; // Ignores messages from bots
-	}
-	if (message.type === "PINS_ADD") return; // Ignores PIN messages
-
+	if (isMessageIgnored(message)) return;
 	const text = message.content.toLowerCase();
 
 	// Filters Explicit Words
