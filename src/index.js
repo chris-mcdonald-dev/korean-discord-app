@@ -18,7 +18,7 @@ const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
 const { addBookmark, removeBookmark } = require("./scripts/bookmarks");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
-const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
+const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
@@ -72,7 +72,7 @@ client.on("message", (message) => {
 
 	// Sends typing game explanation to exercise channel
 	gameExplanation(message);
-	
+
 	if (text.includes("wake up") && text.includes(process.env.CLIENT_ID)) {
 		// Bot's ID
 		ping(message);
@@ -137,8 +137,21 @@ client.on("message", (message) => {
 
 	// Find upcoming study sessions
 	if (text.startsWith("!upcoming study")) getUpcomingStudySessions(message);
+
+	if (text.startsWith("!cancel study")) {
+		cancelStudySessionFromCommand(message);
+		return;
+	}
 });
 /* --------------------------------------------------- */
+
+client.on("messageDelete", (message) => {
+	const text = message.content.toLowerCase();
+	if (text.startsWith("!study")) {
+		cancelStudySessionFromDeletion(message);
+		return;
+	}
+});
 
 /* ________________ MAIN MESSAGE REACTION ADD LISTENER ________________ */
 
