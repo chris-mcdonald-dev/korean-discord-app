@@ -73,6 +73,14 @@ const STUDY_SESSION = {
 			description: `Oops! An error as occurred while cancelling the study session. Please try again!${error ? `\n\n*${error}*` : ""}`,
 		}),
 		UNAUTHORIZED: { content: "❌ Hep! Only the study session's owner can cancel the session." },
+		NOT_FOUND: {
+			title: "🙈 No sessions found",
+			description: "Oops! Looks like you haven't created any sessions at that time.",
+		},
+		MISSING_DATE: {
+			title: "📆 Missing date",
+			description: "Please provide a valid date!\n\n*The accepted format is `YYYY/MM/DD` for the date and `HH:mm` for the time.*",
+		},
 	},
 };
 
