@@ -61,7 +61,7 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
 	if (isMessageIgnored(message)) return;
-	const text = message.content.toLowerCase();
+	const text = getContent(message).toLowerCase();
 
 	// Filters Explicit Words
 	if (explicitWordFilter(message)) {
@@ -145,8 +145,12 @@ client.on("message", (message) => {
 });
 /* --------------------------------------------------- */
 
+function getContent(message) {
+	return message.content ? message.content : "";
+}
+
 client.on("messageDelete", (message) => {
-	const text = message.content.toLowerCase();
+	const text = getContent(message).toLowerCase();
 	if (text.startsWith("!study")) {
 		cancelStudySessionFromDeletion(message);
 		return;
@@ -160,7 +164,7 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 
 	const { message, emoji } = messageReaction;
-	const text = message.content.toLowerCase();
+	const text = getContent(message).toLowerCase();
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
@@ -184,7 +188,7 @@ client.on("messageReactionRemove", async (messageReaction, user) => {
 	// If the server has restarted, messages may not be cached
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 	const { message, emoji } = messageReaction;
-	const text = message.content.toLowerCase();
+	const text = getContent(message).toLowerCase();
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;

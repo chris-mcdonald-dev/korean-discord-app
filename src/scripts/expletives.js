@@ -63,7 +63,7 @@ const englishKoreanRegex = /([\w]+|[\x00-\x7F\x80-\xFF\u0100-\u017F\u0180-\u024F
 
 /* Checks if message has expletives */
 function check(message) {
-	let contentArray = message.content.split(englishKoreanRegex);
+	let contentArray = getContent(message).split(englishKoreanRegex);
 
 	let foundExpletive = false;
 	contentArray.forEach((word, index) => {
@@ -88,6 +88,10 @@ function check(message) {
 	});
 	newMessage = contentArray.join("");
 	return foundExpletive;
+}
+
+function getContent(message) {
+	return message.content ? message.content : "";
 }
 
 /* Replaces characters used to get around expletive filters */
