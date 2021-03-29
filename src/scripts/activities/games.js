@@ -327,7 +327,7 @@ function endTypingGame(message) {
 
 /* ___________________ Sends Game Explanation Message _________________ */
 function gameExplanation(message) {
-	const text = message.content;
+	const text = getContent(message);
 	// Sends typing game explanation
 	if (message.channel.id === process.env.EXERCISES_CHANNEL) {
 		clearTimeout(global.noResponseTimeout);
@@ -355,5 +355,9 @@ function gameExplanation(message) {
 	}
 }
 /* ------------------------------------------------- */
+
+function getContent(message) {
+	return message.content ? message.content : "";
+}
 
 module.exports = { typingGame, typingGameListener, endTypingGame, gameExplanation };
