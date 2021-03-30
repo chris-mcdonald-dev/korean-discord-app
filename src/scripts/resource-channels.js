@@ -81,12 +81,8 @@ function resourcesMuteMessage(message, client) {
 
 function checkIfResource(message) {
 	if (message.attachments.size) return true; // Ignores attachments
-	if (getContent(message).includes("http")) return true; // Ignores all links
+	if ((message.content ?? "").includes("http")) return true; // Ignores all links
 	return false;
-}
-
-function getContent(message) {
-	return message.content ? message.content : "";
 }
 
 module.exports = { resourcesObserver };
