@@ -63,7 +63,7 @@ const englishKoreanRegex = /([\w]+|[\x00-\x7F\x80-\xFF\u0100-\u017F\u0180-\u024F
 
 /* Checks if message has expletives */
 function check(message) {
-  if (!message.content) return
+	if (!message.content) return
 	let contentArray = message.content.split(englishKoreanRegex);
 
 	let foundExpletive = false;
