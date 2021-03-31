@@ -15,7 +15,7 @@ const { koreanObserver } = require("./scripts/korean-channel");
 const { resourcesObserver } = require("./scripts/resource-channels");
 const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
-const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
+const { unPin50thMsg, getAllChannels, ping } = require("./scripts/utilities");
 const { addBookmark, removeBookmark } = require("./scripts/bookmarks");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
@@ -61,7 +61,7 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
 	if (isMessageIgnored(message)) return;
-	const text = getContent(message).toLowerCase();
+	const text = (message.content ?? "").toLowerCase();
 
 	// Filters Explicit Words
 	if (explicitWordFilter(message)) {
@@ -145,12 +145,9 @@ client.on("message", (message) => {
 });
 /* --------------------------------------------------- */
 
-function getContent(message) {
-	return message.content ? message.content : "";
-}
 
 client.on("messageDelete", (message) => {
-	const text = getContent(message).toLowerCase();
+	const text = (message.content ?? "").toLowerCase();
 	if (text.startsWith("!study")) {
 		cancelStudySessionFromDeletion(message);
 		return;
@@ -164,7 +161,7 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 
 	const { message, emoji } = messageReaction;
-	const text = getContent(message).toLowerCase();
+	const text = (message.content ?? "").toLowerCase();
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
@@ -188,7 +185,7 @@ client.on("messageReactionRemove", async (messageReaction, user) => {
 	// If the server has restarted, messages may not be cached
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 	const { message, emoji } = messageReaction;
-	const text = getContent(message).toLowerCase();
+	const text = (message.content ?? "").toLowerCase();
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
