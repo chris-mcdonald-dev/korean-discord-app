@@ -15,8 +15,9 @@ const { koreanObserver } = require("./scripts/korean-channel");
 const { resourcesObserver } = require("./scripts/resource-channels");
 const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
+const { isDm, handleDmReactionAdd } = require("./scripts/users/dm/dm");
+const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
 const { unPin50thMsg, getAllChannels, ping } = require("./scripts/utilities");
-const { addBookmark, removeBookmark } = require("./scripts/bookmarks");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
@@ -25,7 +26,7 @@ const runScheduler = require("./scheduler").default;
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
-const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
+const client = new Discord.Client({ partials: ["CHANNEL", "MESSAGE", "REACTION"] });
 
 const users = {}; // Message counter object for users
 const chnlMsgs = {}; // Separate message counter object unrelated to users
@@ -165,6 +166,11 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
+
+	if (isDm(message)) {
+		handleDmReactionAdd(emoji, message);
+		return;
+	}
 
 	if (emoji.name === '🔖') {
 		addBookmark(user, message);
