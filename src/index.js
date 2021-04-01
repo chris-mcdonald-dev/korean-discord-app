@@ -15,17 +15,31 @@ const { koreanObserver } = require("./scripts/korean-channel");
 const { resourcesObserver } = require("./scripts/resource-channels");
 const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
-const { unPin50thMsg, getAllChannels, logMessageDate, ping } = require("./scripts/utilities");
+const { isDm, handleDmReactionAdd } = require("./scripts/users/dm/dm");
+const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
+const { unPin50thMsg, getAllChannels, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
-const { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
+const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
-const client = new Discord.Client({ partials: ["MESSAGE", "REACTION"] });
-const counter = {}; // Message counter object for users
+const client = new Discord.Client({ partials: ["CHANNEL", "MESSAGE", "REACTION"] });
+
+const users = {}; // Message counter object for users
+const chnlMsgs = {}; // Separate message counter object unrelated to users
+function isMessageIgnored(message) {
+	if (!message.guild) return true; // Ignores DMs
+	if (message.author.bot) {
+		if (message.type === "PINS_ADD") message.delete();
+		return true; // Ignores messages from bots
+	}
+	if (message.type === "PINS_ADD") return true; // Ignores PIN messages
+	return false;
+}
+
 global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
 
@@ -47,19 +61,19 @@ client.on("ready", () => {
 /* ________________ MAIN MESSAGE LISTENER ________________ */
 
 client.on("message", (message) => {
-	if (!message.guild) return; // Ignores DMs
-	const text = message.content.toLowerCase();
+	if (isMessageIgnored(message)) return;
+	const text = (message.content ?? "").toLowerCase();
+
+	// Filters Explicit Words
+	if (explicitWordFilter(message)) {
+		return;
+	}
+
 	regularQualifyCheck(message);
 
 	// Sends typing game explanation to exercise channel
 	gameExplanation(message);
 
-	if (message.author.bot) {
-		if (message.type === "PINS_ADD") message.delete();
-		return; // Ignores messages from bots
-	}
-	if (message.type === "PINS_ADD") return; // Ignores PIN messages
-	if (text.includes("http")) return; // Ignores all links
 	if (text.includes("wake up") && text.includes(process.env.CLIENT_ID)) {
 		// Bot's ID
 		ping(message);
@@ -97,9 +111,6 @@ client.on("message", (message) => {
 			break;
 	}
 
-	// Filters Explicit Words
-	explicitWordFilter(message);
-
 	// Manual unmute
 	if (text.includes("unmute <@!") || text.includes("unmute @")) {
 		try {
@@ -114,12 +125,12 @@ client.on("message", (message) => {
 	// Ensure long conversations in English aren't being had in Korean Channel
 	const channel = message.channel;
 	if (channel.id === process.env.KOREAN_CHANNEL) {
-		koreanObserver(message, counter, client);
+		koreanObserver(message, chnlMsgs, client);
 	}
 
 	// Ensure long conversations aren't being had in Resource Channel
 	if (channel.id === process.env.LINKS_CHANNEL) {
-		resourcesObserver(message, counter, client);
+		resourcesObserver(message, users, client);
 	}
 
 	// Create study session
@@ -127,8 +138,22 @@ client.on("message", (message) => {
 
 	// Find upcoming study sessions
 	if (text.startsWith("!upcoming study")) getUpcomingStudySessions(message);
+
+	if (text.startsWith("!cancel study")) {
+		cancelStudySessionFromCommand(message);
+		return;
+	}
 });
 /* --------------------------------------------------- */
+
+
+client.on("messageDelete", (message) => {
+	const text = (message.content ?? "").toLowerCase();
+	if (text.startsWith("!study")) {
+		cancelStudySessionFromDeletion(message);
+		return;
+	}
+});
 
 /* ________________ MAIN MESSAGE REACTION ADD LISTENER ________________ */
 
@@ -137,10 +162,20 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 
 	const { message, emoji } = messageReaction;
-	const text = message.content.toLowerCase();
+	const text = (message.content ?? "").toLowerCase();
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
+
+	if (isDm(message)) {
+		handleDmReactionAdd(emoji, message);
+		return;
+	}
+
+	if (emoji.name === '🔖') {
+		addBookmark(user, message);
+		return;
+	}
 
 	// Subscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") subscribeStudySession(message, user);
@@ -156,10 +191,15 @@ client.on("messageReactionRemove", async (messageReaction, user) => {
 	// If the server has restarted, messages may not be cached
 	if (messageReaction.partial) await loadMessageReaction(messageReaction);
 	const { message, emoji } = messageReaction;
-	const text = message.content.toLowerCase();
+	const text = (message.content ?? "").toLowerCase();
 
 	// Don't intercept Bot's reactions
 	if (user.id === client.user.id) return;
+
+	if (emoji.name === '🔖') {
+		removeBookmark(client, user, message);
+		return;
+	}
 
 	// Unsubscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") unsubscribeStudySession(message, user);

@@ -130,4 +130,38 @@ function cancelStudySession(message) {
 	});
 }
 
-module.exports = { createStudySession, getUpcomingStudySessions, subscribeStudySession, unsubscribeStudySession, notifySubscribers, cancelConfirmationStudySession };
+function cancelStudySessionFromCommand(message) {
+	const authorId = message.author.id;
+	const startDate = getStudySessionDate(message.content);
+	if (isNaN(startDate.getDate())) return replyError(message, STUDY_SESSION.CANCEL.MISSING_DATE);
+
+	return StudySession.findOne({
+		"author.id": authorId,
+		startDate: startDate
+	}, (error, studySession) => {
+		if (error) return replyError(message, STUDY_SESSION.CANCEL.ERROR(error));
+		if (!studySession) return replyError(message, STUDY_SESSION.CANCEL.NOT_FOUND);
+
+		cancelNotifySubscribers(message, studySession);
+		studySession
+			.remove()
+			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) : STUDY_SESSION.CANCEL.SUCCESS(message.author)))
+			.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
+	}).catch((error) => {
+		console.log(error);
+	});
+}
+
+function cancelStudySessionFromDeletion(message) {
+	return StudySession.findOne({ "message.id": message.id }, (error, studySession) => {
+		if (error) return replyError(message, STUDY_SESSION.CANCEL.ERROR(error));
+		if (!studySession) return;
+		cancelNotifySubscribers(message, studySession);
+		studySession
+			.remove()
+			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) : STUDY_SESSION.CANCEL.SUCCESS(message.author)))
+			.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
+	});
+}
+
+module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers, cancelConfirmationStudySession };
