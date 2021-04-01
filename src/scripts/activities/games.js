@@ -129,9 +129,6 @@ const vocabWords = {
 	과학: "Science",
 	생물학: "Biology",
 	역사: "History",
-};
-
-const weeklyVocab = {
 	기숙사: "Dormitory",
 	베개: "Pillow",
 	담요: "Blanket",
@@ -145,6 +142,24 @@ const weeklyVocab = {
 	온돌: "Heated floors",
 	보일러: "Heat/Heating",
 	에어컨: "Air conditioning (AC)",
+};
+
+const weeklyVocab = {
+	요일: "Day",
+	오늘: "Today",
+	주: "Week",
+	평일: "Weekday",
+	월요일: "Monday",
+	화요일: "Tuesday",
+	수요일: "Wednesday",
+	옥요일: "Thursday",
+	금요일: "Friday",
+	토요일: "Saturday",
+	일요일: "Sunday",
+	내일: "Tomorrow",
+	어제: "Yesterday",
+	모레: "Day after tomorrow",
+	그저께: "Day before yesterday",
 };
 /* --------------------------------------- */
 
