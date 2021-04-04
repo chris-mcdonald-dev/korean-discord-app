@@ -142,9 +142,6 @@ const vocabWords = {
 	온돌: "Heated floors",
 	보일러: "Heat/Heating",
 	에어컨: "Air conditioning (AC)",
-};
-
-const weeklyVocab = {
 	채널: "Channel",
 	뉴스: "News",
 	인터넷: "Internet",
@@ -157,6 +154,24 @@ const weeklyVocab = {
 	드라마: "TV Show",
 	책: "Book",
 	"예능 프로그램": "Variety show/program",
+};
+
+const weeklyVocab = {
+	요일: "Day",
+	오늘: "Today",
+	주: "Week",
+	평일: "Weekday",
+	월요일: "Monday",
+	화요일: "Tuesday",
+	수요일: "Wednesday",
+	옥요일: "Thursday",
+	금요일: "Friday",
+	토요일: "Saturday",
+	일요일: "Sunday",
+	내일: "Tomorrow",
+	어제: "Yesterday",
+	모레: "Day after tomorrow",
+	그저께: "Day before yesterday",
 };
 /* --------------------------------------- */
 
