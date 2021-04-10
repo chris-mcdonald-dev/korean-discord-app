@@ -162,7 +162,7 @@ function endTypingGame(message) {
 
 /* ___________________ Sends Game Explanation Message _________________ */
 function gameExplanation(message) {
-	const text = message.content;
+	const text = message.content ?? "";
 	// Sends typing game explanation
 	if (message.channel.id === process.env.EXERCISES_CHANNEL) {
 		clearTimeout(global.noResponseTimeout);
@@ -183,12 +183,13 @@ function gameExplanation(message) {
 		clearTimeout(global.explanationTimeout);
 		global.explanationTimeout = setTimeout(() => {
 			sendResponse(message);
-		}, 10000);
+		}, 20000);
 	}
 	function sendResponse(message) {
 		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n\n- ***OR*** -\n\n`!t`  or  `!ㅌ`");
 	}
 }
 /* ------------------------------------------------- */
+
 
 module.exports = { typingGame, typingGameListener, endTypingGame, gameExplanation };
