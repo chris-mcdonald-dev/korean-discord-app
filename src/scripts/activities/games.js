@@ -375,7 +375,7 @@ function gameExplanation(message) {
 		clearTimeout(global.explanationTimeout);
 		global.explanationTimeout = setTimeout(() => {
 			sendResponse(message);
-		}, 10000);
+		}, 20000);
 	}
 	function sendResponse(message) {
 		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n- ***OR*** -\n`!t`");
