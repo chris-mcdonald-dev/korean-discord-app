@@ -154,9 +154,6 @@ const vocabWords = {
 	드라마: "TV Show",
 	책: "Book",
 	"예능 프로그램": "Variety show/program",
-};
-
-const weeklyVocab = {
 	요일: "Day",
 	오늘: "Today",
 	주: "Week",
@@ -164,7 +161,7 @@ const weeklyVocab = {
 	월요일: "Monday",
 	화요일: "Tuesday",
 	수요일: "Wednesday",
-	옥요일: "Thursday",
+	목요일: "Thursday",
 	금요일: "Friday",
 	토요일: "Saturday",
 	일요일: "Sunday",
@@ -172,6 +169,21 @@ const weeklyVocab = {
 	어제: "Yesterday",
 	모레: "Day after tomorrow",
 	그저께: "Day before yesterday",
+};
+
+const weeklyVocab = {
+	"봄": "Spring",
+	"반팔": "Shortsleeves",
+	"갈아입다": "To change clothes",
+	"꽃이 피다": "To bloom (flowers)",
+	"바람이 불다": "To blow (wind)",
+	"꽃가루": "Pollen",
+	"재채기하다": "To sneeze",
+	"재채기를 참다": "To hold back a sneeze",
+	"쉬다": "To rest",
+	"나비": "Butterfly",
+	"토끼": "Bunny",
+	"벚꽃": "Cherry blossom flowers",
 };
 /* --------------------------------------- */
 
