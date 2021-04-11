@@ -3,7 +3,6 @@
 google-sheets.json
 
 .idea
-/git_ignore
 /node_modules
 package-lock.json
 lib
