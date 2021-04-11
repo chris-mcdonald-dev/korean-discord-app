@@ -40,6 +40,7 @@
 | :---:         |     :---:      |          :---: |
 | **Check if bot is running** |  Everyone  | <br>**Wake up! @`Bot's name`** <br><br> |
 | **Start Korean Typing Exercise** |  Everyone  | <br>**@`Bot's name` typing<br><br>***- OR -***<br><br>!t**<br><br> |
+| **Start Korean Translating Exercise** |  Everyone  | <br>**@`Bot's name` translating<br><br>***- OR -***<br><br>!tr**<br><br> |
 | **Create Study Session** |  Everyone  | <br>**!study `A message that includes: YYYY/MM/DD and HH:mm am/pm (ex. 2021/01/25 02:00 am)`**<br><br> |
 | **Cancel Study Session** |  Everyone  | <br>**!cancel study `A message that includes: YYYY/MM/DD and HH:mm am/pm (ex. 2021/01/25 02:00 am)`**<br><br> |
 | **List Upcoming Study Sessions** |  Everyone  | <br>**!upcoming study**<br><br> |

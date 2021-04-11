@@ -1,16 +1,17 @@
+const { isExercisesChannel } = require("./../utilities");
+
 /* ________________ Vocab Words _______________ */
 
 /* --------------------------------------- */
+const GoogleSheets = require("../../connections/google-sheets-conn");
 
 const GoogleSheets = require("../../connections/google-sheets-conn");
 
 /* ____________ Main Typing Game Function ____________ */
 
 async function typingGame(message, client) {
-	if (message.channel.id !== process.env.EXERCISES_CHANNEL) {
-		client.channels.fetch(process.env.EXERCISES_CHANNEL).then((exerciseChannel) => {
-			message.reply(`Psst...I think you meant to send this in the ${exerciseChannel} channel.\nBut don't worry, no one noticed!`);
-		});
+	if (!isExercisesChannel(message.channel)) {
+		sendWrongChannelMessage(client, channel);
 		return;
 	}
 
@@ -20,7 +21,7 @@ async function typingGame(message, client) {
 
 		// Checks if waiting to receive input from users
 		if (typeof global.typingGame.listenerFlag === "undefined" || global.typingGame.listenerFlag) {
-			endTypingGame(message);
+			endTypingGame(message, false);
 		}
 
 		// Sets flag showing game is in play to true
@@ -65,6 +66,11 @@ async function typingGame(message, client) {
 	}
 }
 /* ------------------------------------------- */
+function sendWrongChannelMessage(client, message) {
+	client.channels.fetch(process.env.EXERCISES_CHANNEL).then((exerciseChannel) => {
+		message.reply(`Psst...I think you meant to send this in the ${exerciseChannel} channel.\nBut don't worry, no one noticed!`);
+	});
+}
 
 async function getVocab(message) {
 	// Pulls random word from vocabWords
@@ -119,7 +125,7 @@ function typingGameListener(message, client) {
 							setTimeout(() => msg.edit(`Round ${global.typingGame.roundCount + 1} starts in **2**`), 3000);
 							setTimeout(() => msg.edit(`Round ${global.typingGame.roundCount + 1} starts in **1**`), 4000);
 							setTimeout(() => msg.edit("Quick, type the Korean word below!"), 5000);
-							setTimeout(() => typingGame(message), 5000);
+							setTimeout(() => typingGame(message, client), 5000);
 						}),
 					1000
 				);
@@ -135,7 +141,7 @@ function typingGameListener(message, client) {
 				// Ends game
 				global.typingGame.listenerFlag = false;
 				global.typingFlag = false;
-				endTypingGame(message);
+				endTypingGame(message, false);
 			}
 		}
 	} catch (error) {
@@ -169,7 +175,7 @@ function endTypingGame(message, wroteStopFlag, noMsg) {
 function gameExplanation(message) {
 	const text = message.content ?? "";
 	// Sends typing game explanation
-	if (message.channel.id === process.env.EXERCISES_CHANNEL) {
+	if (isExercisesChannel(message.channel)) {
 		clearTimeout(global.noResponseTimeout);
 
 		//Ignores messages from the bot unless it's a message signaling end of game
@@ -177,7 +183,7 @@ function gameExplanation(message) {
 			clearTimeout(global.explanationTimeout);
 			// Ignores typing game explanation message
 			// But sends explanation when game timeout runs out
-			if (!text.includes("!t")) {
+			if (!(text.includes("!t") || text.includes("!tr") || text.includes("!ㅌ"))) {
 				global.noResponseTimeout = setTimeout(() => {
 					sendResponse(message);
 				}, 30000);
@@ -191,10 +197,152 @@ function gameExplanation(message) {
 		}, 20000);
 	}
 	function sendResponse(message) {
-		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n\n- ***OR*** -\n\n`!t`  or  `!ㅌ`");
+		message.channel.send("...uhh,\n\nAhem... If you would like to start the typing exercise, you can type:\n\n<@!784522323755663411> `typing`\n\n- ***OR*** -\n\n`!t`  or  `!ㅌ`\n\nIf you would like to start the translating exercise, you can type:\n\n<@!784522323755663411> `translating`\n- ***OR*** -\n`!tr`");
 	}
 }
 /* ------------------------------------------------- */
 
+/* ____________ Main Translating Game Function ____________ */
 
-module.exports = { typingGame, typingGameListener, endTypingGame, gameExplanation };
+async function translatingGame(message, client) {
+	if (!isExercisesChannel(message.channel)) {
+		sendWrongChannelMessage(client, channel);
+		return;
+	}
+
+	try {
+		// Creates Global Translating Game object
+		global.translatingGame = global.translatingGame || {};
+
+		// Checks if waiting to receive input from users
+		if (typeof global.translatingGame.listenerFlag === "undefined" || global.translatingGame.listenerFlag) {
+			endTranslatingGame(message, false);
+		}
+
+		// Sets flag showing game is in play to true
+		global.translatingFlag = true;
+
+		/* Immediately sets listener flag to true at the start of each round */
+		global.translatingGame.listenerFlag = true;
+
+		const { word, definition } = await getVocab(message);
+
+		if (!global.translatingGameFirstRoundStarted) {
+			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this in Korean then!`), 1000);
+			setTimeout(
+				() =>
+					message.channel.send("I'll give you the first challenge in **5**").then((msg) => {
+						setTimeout(() => msg.edit("I'll give you the first challenge in **4**"), 1000);
+						setTimeout(() => msg.edit("I'll give you the first challenge in **3**"), 2000);
+						setTimeout(() => msg.edit("I'll give you the first challenge in **2**"), 3000);
+						setTimeout(() => msg.edit("I'll give you the first challenge in **1**"), 4000);
+						setTimeout(() => msg.edit("Quick, translate this into **Korean** below!"), 5000);
+					}),
+				2000
+			);
+
+			// Send Korean vocab word to chat
+			global.translatingGameTimeout = setTimeout(() => {
+				message.channel.send(`${definition}`);
+				// 500 ms to approximately account for slight latency
+				global.translatingGame.startTime = Date.now() + 500;
+			}, 7200);
+		} else {
+			message.channel.send(`${definition}`);
+			global.translatingGame.startTime = Date.now() + 500;
+		}
+
+		// Sets flag showing first round started to true
+		global.translatingGameFirstRoundStarted = true;
+		global.translatingGameAnswer = word;
+	} catch (error) {
+		console.log(error);
+		return;
+	}
+}
+/* ------------------------------------------- */
+
+function translatingGameListener(message, client) {
+	try {
+		if (message.content === global.translatingGameAnswer) {
+			/* Sets listener flag to false when user gives the correct answer */
+			global.translatingGame.listenerFlag = false;
+			global.translatingGameAnswer = undefined;
+
+			// Creates round counter and increases count
+			global.translatingGame.roundCount = global.translatingGame.roundCount + 1 || 1;
+
+			const author = message.author;
+
+			//Creates list of winners
+			global.translatingGame.winners = global.translatingGame.winners || {};
+
+			// Keeps track of how many times a user has won in the round
+			global.translatingGame.winners[author] = global.translatingGame.winners[author] + 1 || 1;
+
+			// Calculates time elapsed
+			global.translatingGame.endTime = Date.now();
+			global.translatingGame.elapsed = global.translatingGame.endTime - global.translatingGame.startTime;
+			const inSeconds = (global.translatingGame.elapsed / 1000).toFixed(2);
+			global.translatingGame.fullTime = global.translatingGame.fullTime || 0;
+			const unroundedNum = parseFloat(global.translatingGame.fullTime) + parseFloat(inSeconds);
+			global.translatingGame.fullTime = unroundedNum.toFixed(2);
+
+			message.channel.send(`Manomanoman, you sure are good at this!\n**${author} won round ${global.translatingGame.roundCount}!**\nI wasn't really counting or anything, but it took you **${inSeconds} seconds**.`);
+
+			if (global.translatingGame.roundCount < 5) {
+				setTimeout(
+					() =>
+						message.channel.send(`Round ${global.translatingGame.roundCount + 1} starts in **5**`).then((msg) => {
+							setTimeout(() => msg.edit(`Round ${global.translatingGame.roundCount + 1} starts in **4**`), 1000);
+							setTimeout(() => msg.edit(`Round ${global.translatingGame.roundCount + 1} starts in **3**`), 2000);
+							setTimeout(() => msg.edit(`Round ${global.translatingGame.roundCount + 1} starts in **2**`), 3000);
+							setTimeout(() => msg.edit(`Round ${global.translatingGame.roundCount + 1} starts in **1**`), 4000);
+							setTimeout(() => msg.edit("Quick, translate this into Korean below!"), 5000);
+							setTimeout(() => translatingGame(message, client), 5000);
+						}),
+					1000
+				);
+			} else {
+				const winners = global.translatingGame.winners;
+				const fullTime = global.translatingGame.fullTime;
+				setTimeout(() => message.channel.send("I'm going to have to bring my A-game next time."), 1000);
+				setTimeout(() => message.channel.send(`__Here are this exercise's **results**__:`), 1250);
+				setTimeout(() => message.channel.send(`You got through the entire thing in a total of **${fullTime}** seconds.`), 1500);
+				Object.keys(winners).forEach((winner) => {
+					setTimeout(() => message.channel.send(`${winner}: ${winners[winner]} wins`), 1600);
+				});
+				// Ends game
+				global.translatingGame.listenerFlag = false;
+				global.translatingFlag = false;
+				endTranslatingGame(message, false);
+			}
+		}
+	} catch (error) {
+		console.log(error);
+		return;
+	}
+}
+/* -------------------------------------------------- */
+
+/* ____________________ Ends Translating Game __________________ */
+
+function endTranslatingGame(message, wroteStopFlag) {
+	if (wroteStopFlag) {
+		if (global.translatingFlag) {
+			message.channel.send('Fine, just don\'t ask me to call you "professor fasty fast" anymore.');
+		} else {
+			message.channel.send("We weren't doing any exercises, silly.");
+		}
+	} else if (global.translatingFlag) {
+		message.channel.send('Okay, let\'s restart the exercise then, "professor fasty fast".');
+	}
+	clearTimeout(global.translatingGameTimeout);
+	global.translatingGame = {};
+	// Sets flag showing game is in play to false
+	global.translatingFlag = false;
+	global.translatingGameFirstRoundStarted = false;
+}
+/* -------------------------------------------------- */
+
+module.exports = { typingGame, typingGameListener, endTypingGame, translatingGame, translatingGameListener, endTranslatingGame, gameExplanation };
