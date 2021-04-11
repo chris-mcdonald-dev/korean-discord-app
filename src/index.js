@@ -2,6 +2,7 @@
 
 const Discord = require("discord.js");
 require("dotenv").config();
+require("./connections/google-sheets-conn");
 require("./database");
 import "core-js/stable";
 import "regenerator-runtime/runtime";
@@ -97,7 +98,7 @@ client.on("message", (message) => {
 
 	switch (true) {
 		// Start Typing Game
-		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t":
+		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t" || text === "!ㅌ":
 			typingGame(message, client);
 			break;
 		// Stop Typing Game
