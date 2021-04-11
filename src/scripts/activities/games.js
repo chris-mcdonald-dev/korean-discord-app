@@ -2,7 +2,7 @@
 
 /* --------------------------------------- */
 
-const GoogleSheets = require("./vocab/google-sheets-conn");
+const GoogleSheets = require("../../connections/google-sheets-conn");
 
 /* ____________ Main Typing Game Function ____________ */
 
@@ -29,7 +29,7 @@ async function typingGame(message, client) {
 		/* Immediately sets listener flag to true at the start of each round */
 		global.typingGame.listenerFlag = true;
 
-		const { word, definition } = await getVocab();
+		const { word, definition } = await getVocab(message);
 
 		if (!global.tgFirstRoundStarted) {
 			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this word in Korean then!`), 1000);
@@ -66,11 +66,16 @@ async function typingGame(message, client) {
 }
 /* ------------------------------------------- */
 
-async function getVocab() {
+async function getVocab(message) {
 	// Pulls random word from vocabWords
 	const oldOrNewVocab = Math.floor(Math.random() * 4); //Determines whether user gets old or new vocab
 	const range = oldOrNewVocab < 1 ? "Old Vocab!A2:B" : "Weekly Vocab!A2:B";
-	const vocabList = await GoogleSheets.getVocab(range);
+	const vocabList = await GoogleSheets.fetchVocab(range);
+	if (!vocabList) {
+		message.channel.send("I couldn't get the vocab for some reason. Ugh, my makers are useless.\nMaybe we should try again?")
+		endTypingGame(message, false, true);
+		return;
+	}
 	const seed = Math.floor(Math.random() * vocabList.length);
 	return vocabList[seed];
 }
@@ -142,14 +147,14 @@ function typingGameListener(message, client) {
 
 /* ____________________ Ends Typing Game __________________ */
 
-function endTypingGame(message) {
-	if (typeof wroteStopFlag !== "undefined") {
+function endTypingGame(message, wroteStopFlag, noMsg) {
+	if (wroteStopFlag) {
 		if (global.typingFlag) {
 			message.channel.send('Fine, just don\'t ask me to call you "professor fasty fast" anymore.');
 		} else {
 			message.channel.send("We weren't doing any exercises, silly.");
 		}
-	} else if (global.typingFlag) {
+	} else if (global.typingFlag && !noMsg) {
 		message.channel.send('Okay, let\'s restart the exercise then, "professor fasty fast".');
 	}
 	clearTimeout(global.typingGameTimeout);

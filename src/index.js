@@ -2,7 +2,7 @@
 
 const Discord = require("discord.js");
 require("dotenv").config();
-require("./scripts/activities/vocab/google-sheets-conn");
+require("./connections/google-sheets-conn");
 require("./database");
 import "core-js/stable";
 import "regenerator-runtime/runtime";

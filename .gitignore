@@ -1,4 +1,7 @@
+### KEYS ###
 .env
+google-sheets.json
+
 .idea
 /git_ignore
 /node_modules
