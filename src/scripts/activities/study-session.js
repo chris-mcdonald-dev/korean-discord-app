@@ -72,7 +72,7 @@ function getUpcomingStudySessions(message) {
 
 function subscribeStudySession(message, user) {
 	StudySession.findOneAndUpdate({ "message.id": message.id }, { $push: { subscribersId: user.id } })
-		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
+		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user, message.content)))
 		.catch((error) => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
 }
 
