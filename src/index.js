@@ -21,6 +21,7 @@ const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
 const { unPin50thMsg, getAllChannels, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
+const { convertBetweenTimezones } = require("./scripts/utility-commands/time-and-date");
 const { loadMessageReaction } = require("./utils/cache");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
@@ -142,6 +143,11 @@ client.on("message", (message) => {
 
 	if (text.startsWith("!cancel study")) {
 		cancelStudySessionFromCommand(message);
+		return;
+	}
+
+	if (text.startsWith("!timezone")) {
+		convertBetweenTimezones(message);
 		return;
 	}
 });
