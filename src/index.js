@@ -20,7 +20,7 @@ const { isDm, handleDmReactionAdd } = require("./scripts/users/dm/dm");
 const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
 const { unPin50thMsg, getAllChannels, ping } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
-const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, cancelConfirmationStudySession } = require("./scripts/activities/study-session");
+const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession } = require("./scripts/activities/study-session");
 const { loadMessageReaction } = require("./utils/cache");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
@@ -180,9 +180,6 @@ client.on("messageReactionAdd", async (messageReaction, user) => {
 
 	// Subscribe to a study session
 	if (text.startsWith("!study") && emoji.name === "⭐") subscribeStudySession(message, user);
-
-	// Cancel study session
-	if (text.startsWith("!study") && emoji.name === "❌") cancelConfirmationStudySession(message, user);
 });
 /* --------------------------------------------------- */
 
