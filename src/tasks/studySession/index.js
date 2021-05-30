@@ -1,3 +1,4 @@
 import notifySubscribers from './notifySubscribers';
+import sendChannelReminder from './channelReminder';
 
-export default [notifySubscribers];
+export default [notifySubscribers, sendChannelReminder];
