@@ -17,14 +17,14 @@ function getStudySessionDate(text) {
 
 function getStudySessionEstimatedLength(text) {
 	// Regex Declaration
-	const hoursRgx = /(\d)\s?hour/; // h hour(s)
-	const minutesRgx = /(\d{1,2})\s?min/; // mm min(utes)
+	const hoursRgx = /(\d+)\s?hour/; // h hour(s)
+	const minutesRgx = /(\d+)\s?min/; // mm min(utes)
 
 	// Catching information from message
-	const estimatedLengthHours = hoursRgx.exec(text)?.[1];
-	const estimatedLengthMinutes = minutesRgx.exec(text)?.[1];
+	const estimatedLengthHours = hoursRgx.exec(text)?.[1] ?? 0;
+	const estimatedLengthMinutes = minutesRgx.exec(text)?.[1] ?? 0;
 
-	return estimatedLengthHours ? estimatedLengthHours * 60 : estimatedLengthMinutes;
+	return (Number(estimatedLengthHours) * 60) + Number(estimatedLengthMinutes);
 }
 
 // Retrieve Study Session information from message
@@ -57,7 +57,7 @@ function createStudySession(message) {
 	StudySession.create(studySession)
 		.then(() => {
 			replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession));
-			react(message, null, ["⭐", "❌"]);
+			react(message, null, ["⭐"]);
 		})
 		.catch((error) => replyError(message, STUDY_SESSION.CREATE.ERROR(error)));
 }
@@ -78,7 +78,7 @@ function getUpcomingStudySessionsForScheduler() {
 
 function subscribeStudySession(message, user) {
 	StudySession.findOneAndUpdate({ "message.id": message.id }, { $push: { subscribersId: user.id } })
-		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user)))
+		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user, message.content)))
 		.catch((error) => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.ERROR(user, error)));
 }
 
@@ -99,22 +99,6 @@ function notifySubscribers(client, studySession) {
 	});
 }
 
-function cancelConfirmationStudySession(message, user) {
-	if (message.author.id !== user.id) return replyError(message, STUDY_SESSION.CANCEL.UNAUTHORIZED);
-	replySurvey(message, STUDY_SESSION.CANCEL.CONFIRMATION(user), ["✅", "❌"], 60000)
-		.then((result) => {
-			switch (result) {
-				case "✅":
-					return cancelStudySession(message);
-				case "❌":
-					return replyInfo(message, STUDY_SESSION.CANCEL.CANCEL);
-				default:
-					return replyInfo(message, STUDY_SESSION.CANCEL.TIME_ELAPSED);
-			}
-		})
-		.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
-}
-
 function cancelNotifySubscribers(message, studySession) {
 	if (studySession.subscribersId?.length > 0)
 		return studySession.subscribersId.map((subscriberId) => {
@@ -123,17 +107,6 @@ function cancelNotifySubscribers(message, studySession) {
 				.then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.CANCEL.NOTIFICATION(message.author, subscriber)))
 				.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 		});
-}
-
-function cancelStudySession(message) {
-	StudySession.findOne({ "message.id": message.id }, (error, studySession) => {
-		if (error) return replyError(message, STUDY_SESSION.CANCEL.ERROR(error));
-		cancelNotifySubscribers(message, studySession);
-		studySession
-			.remove()
-			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) : STUDY_SESSION.CANCEL.SUCCESS(message.author)))
-			.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
-	});
 }
 
 function cancelStudySessionFromCommand(message) {
@@ -170,4 +143,4 @@ function cancelStudySessionFromDeletion(message) {
 	});
 }
 
-module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers, cancelConfirmationStudySession, getUpcomingStudySessionsForScheduler };
+module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers, getUpcomingStudySessionsForScheduler };
