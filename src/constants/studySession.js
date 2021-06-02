@@ -6,7 +6,7 @@ const STUDY_SESSION = {
 		SUCCESS: (session) => ({
 			title: "STUDY SESSION",
 			content: "Study session has been registered successfully!",
-			description: `📆 ${getUTCFullDate(session.startDate, "date")} at ${getUTCFullDate(session.startDate, "time")} *(UTC)*\n🕑 Estimated length: ${session.estimatedLength} minutes.\n\n${session.message?.text}\n\n*If anybody wants to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, press the ❌ button*`,
+			description: `📆 ${getUTCFullDate(session.startDate, "date")} at ${getUTCFullDate(session.startDate, "time")} *(UTC)*\n🕑 Estimated length: ${session.estimatedLength} minutes.\n\n${session.message?.text}\n\n*If anybody wants to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, delete the message used to create it*`,
 			withAuthor: true,
 		}),
 		ERROR: (error) => ({
