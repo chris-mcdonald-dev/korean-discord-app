@@ -17,14 +17,14 @@ function getStudySessionDate(text) {
 
 function getStudySessionEstimatedLength(text) {
 	// Regex Declaration
-	const hoursRgx = /(\d)\s?hour/; // h hour(s)
-	const minutesRgx = /(\d{1,2})\s?min/; // mm min(utes)
+	const hoursRgx = /(\d+)\s?hour/; // h hour(s)
+	const minutesRgx = /(\d+)\s?min/; // mm min(utes)
 
 	// Catching information from message
-	const estimatedLengthHours = hoursRgx.exec(text)?.[1];
-	const estimatedLengthMinutes = minutesRgx.exec(text)?.[1];
+	const estimatedLengthHours = hoursRgx.exec(text)?.[1] ?? 0;
+	const estimatedLengthMinutes = minutesRgx.exec(text)?.[1] ?? 0;
 
-	return estimatedLengthHours ? estimatedLengthHours * 60 : estimatedLengthMinutes;
+	return (Number(estimatedLengthHours) * 60) + Number(estimatedLengthMinutes);
 }
 
 // Retrieve Study Session information from message
