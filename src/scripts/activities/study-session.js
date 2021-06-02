@@ -70,6 +70,12 @@ function getUpcomingStudySessions(message) {
 	}).limit(5);
 }
 
+function getUpcomingStudySessionsForScheduler() {
+	return StudySession.find({ startDate: { $gt: new Date() } }, null, { sort: "startDate" }).limit(5).catch((error) => {
+		console.log(error);
+	});
+}
+
 function subscribeStudySession(message, user) {
 	StudySession.findOneAndUpdate({ "message.id": message.id }, { $push: { subscribersId: user.id } })
 		.then(() => sendDirectMessage(user, STUDY_SESSION.SUBSCRIBE.SUCCESS(message.author, user, message.content)))
@@ -137,4 +143,4 @@ function cancelStudySessionFromDeletion(message) {
 	});
 }
 
-module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers };
+module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers, getUpcomingStudySessionsForScheduler };
