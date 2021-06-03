@@ -29,12 +29,16 @@ export default function sendChannelReminder(client) {
         const mostRecentStudySessionMessage = studySessionMessages.first();
 
         if (isMessageOlderThan5HoursAgo(mostRecentStudySessionMessage)) {
-            mostRecentStudySessionMessage.delete().then(() => {
-                makeStudySessionMessage().then((studyMessage) => {
-                    studySessionChannel.send(studyMessage).catch((error) => {
+            makeStudySessionMessage().then((studyMessage) => {
+                if (upcomingSessionsAreDifferent(mostRecentStudySessionMessage, studyMessage)) {
+                    mostRecentStudySessionMessage.delete().then(() => {
+                        studySessionChannel.send(studyMessage).catch((error) => {
+                            console.log(error);
+                        });
+                    }).catch((error) => {
                         console.log(error);
                     });
-                });
+                }
             }).catch((error) => {
                 console.log(error);
             });
@@ -96,6 +100,21 @@ function getUpcomingStudySessionSummary(message) {
         return truncatedString + "...";
     }
     return truncatedString;
+}
+
+function upcomingSessionsAreDifferent(oldMessage, newMessage) {
+    const oldMessageEmbed = oldMessage.embeds[0];
+    const newMessageEmbed = newMessage.embed;
+    if (oldMessageEmbed.title !== newMessageEmbed.title) {
+        return true;
+    }
+    if (oldMessageEmbed.fields.length !== newMessageEmbed.fields.length) {
+        return true;
+    }
+    return oldMessageEmbed.fields.some((oldMessageEmbedField, index) => {
+        return newMessageEmbed.fields[index].name !== oldMessageEmbedField.name ||
+            newMessageEmbed.fields[index].value !== oldMessageEmbedField.value
+    });
 }
 
 function createNotFoundMessage() {
