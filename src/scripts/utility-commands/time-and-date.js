@@ -15,7 +15,7 @@ function convertBetweenTimezones(message) {
 
     const timezones = getTimeZonesFromMessage(text);
     if (timezones === null || timezones.length === 0) {
-        message.reply("please provide at least one valid timezone to convert to. \n\nFor a list of valid timezones see the *'TZ database name'* column in this table here: <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List>");
+        message.reply("please provide at least one valid timezone to convert to. \n\nFor more information use `!help timezone`");
         return;
     }
 

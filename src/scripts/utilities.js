@@ -88,6 +88,10 @@ function logMessageDate() {
 }
 
 function handleHelpCommand(message) {
+	if (message.content.startsWith('!help timezone')) {
+		handleHelpTimezoneCommand(message);
+		return;
+	}
 	if (message.content.startsWith('!help cancel study')) {
 		handleHelpCancelStudyCommand(message);
 		return;
@@ -113,6 +117,14 @@ Create a study session with the \`!study\` command. Use \`!help study\` for more
 
 You can cancel a study session either by deleting the message used to create the session or by using the \`!cancel study\` command. Use \`!help cancel study\` for more information
 					`
+				},
+				{
+					name: 'Timezones',
+					value: `
+Use \`!timezone\` to convert a date-time to equivalent date-times in different regions
+
+Use \`!help timezone\` for more information
+					`
 				}, {
 					name: 'Bookmarks',
 					value: `
@@ -125,6 +137,43 @@ Any message the bot sends via DM can be deleted by applying an 'x' (❌) reactio
 				}, {
 					name: 'Help',
 					value: `Use the \`!help\` command to bring up a list of Little LyonHeart ♡'s available features`
+				}
+			]
+		}
+	});
+}
+
+function handleHelpTimezoneCommand(message) {
+	message.channel.send(null, {
+		embed: {
+			title: "The !timezone command",
+			fields: [
+				{
+					name: 'Description',
+					value: 'The `!timezone` command can be used to convert a date-time into date-times around the world'
+				}, {
+					name: 'Format',
+					value: `
+This requires a date in the format YYYY/MM/DD and a UTC time in HH:mm followed by any number of [TZ database names](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
+					`
+				}, {
+					name: 'Example',
+					value: `
+If you've created a study session with these details
+\`\`\`
+!study 2022/03/05 at 13:30 ...
+\`\`\`
+You can get the equivalent date-times in Toronto, London and Seoul using
+\`\`\`
+!timezone 2022/03/05 13:30 America/Toronto Europe/London Asia/Seoul
+\`\`\`
+Which creates this response:
+\`\`\`
+Sat, 5 Mar at 08:30 (Eastern Standard Time)
+Sat, 5 Mar at 13:30 (Greenwich Mean Time)
+Sat, 5 Mar at 22:30 (Korean Standard Time)
+\`\`\`
+					`
 				}
 			]
 		}
