@@ -6,7 +6,7 @@ const STUDY_SESSION = {
 		SUCCESS: (session) => ({
 			title: "STUDY SESSION",
 			content: "Study session has been registered successfully!",
-			description: `📆 ${getUTCFullDate(session.startDate, "date")} at ${getUTCFullDate(session.startDate, "time")} *(UTC)*\n🕑 Estimated length: ${session.estimatedLength} minutes.\n\n${session.message?.text}\n\n*If anybody wants to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, delete the message used to create it*`,
+			description: `📆 ${getUTCFullDate(session.startDate, "date")} at ${getUTCFullDate(session.startDate, "time")} *(UTC)*\n🕑 Estimated length: ${session.estimatedLength} minutes.\n\n${getStudySessionText(session.message)}\n\n*If anybody wants to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, delete the message used to create it*`,
 			withAuthor: true,
 		}),
 		ERROR: (error) => ({
@@ -32,7 +32,7 @@ const STUDY_SESSION = {
 			content: "Here are the upcoming study sessions:\n*Make sure to check the time zones!*",
 			fields: sessions.map((session) => ({
 				name: `${session.author.username}'s study session`,
-				value: `*${getUTCFullDate(session.startDate)} UTC (${session.estimatedLength} min)*\n${session.message?.text} - Subscribe [here](${session.message?.link})`,
+				value: `*${getUTCFullDate(session.startDate)} UTC (${session.estimatedLength} min)*\n${getUpcomingStudySessionSummary(session.message)} - Subscribe [here](${session.message?.link})`,
 			})),
 		}),
 		ERROR: (error) => ({
@@ -86,5 +86,35 @@ const STUDY_SESSION = {
 		},
 	},
 };
+
+function getStudySessionText(message) {
+	if (!message || !message.text) {
+		return "";
+	}
+	const lines = message.text.split("\n");
+	if (lines.length < 2) {
+		return lines[0];
+	}
+	return lines.splice(1, lines.length - 1).join("\n");
+}
+
+function getUpcomingStudySessionSummary(message) {
+	if (!message || !message.text) {
+		return "";
+	}
+
+	const text = message.text;
+	const firstLine = text.split("\n", 1)[0].trim();
+	if (firstLine.length > 0) {
+		return firstLine;
+	}
+
+	const contentOnSingleLine = text.split("\n").join(" ").trim();
+	const truncatedString = contentOnSingleLine.split(" ").splice(0, 8).join(" ");
+	if (contentOnSingleLine.length > truncatedString.length + 3) {
+		return truncatedString + "...";
+	}
+	return truncatedString;
+}
 
 module.exports = { STUDY_SESSION };

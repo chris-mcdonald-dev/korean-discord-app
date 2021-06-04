@@ -69,7 +69,7 @@ function makeStudySessionMessage() {
                 title: "UPCOMING STUDY SESSIONS",
                 fields: upcomingStudySessions.map((session) => ({
                     name: `${session.author.username}'s study session`,
-                    value: `*${getUTCFullDate(session.startDate)} UTC (${session.estimatedLength} min)*\n${session.message?.text} - Subscribe [here](${session.message?.link})`,
+                    value: `*${getUTCFullDate(session.startDate)} UTC (${session.estimatedLength} min)*\n${getUpcomingStudySessionSummary(session.message)} - Subscribe [here](${session.message?.link})`,
                 })),
                 color: "GREEN"
             }
@@ -77,6 +77,25 @@ function makeStudySessionMessage() {
     }).catch((error) => {
         console.log(error);
     });
+}
+
+function getUpcomingStudySessionSummary(message) {
+    if (!message || !message.text) {
+        return "";
+    }
+
+    const text = message.text;
+    const firstLine = text.split("\n", 1)[0].trim();
+    if (firstLine.length > 0) {
+        return firstLine;
+    }
+
+    const contentOnSingleLine = text.split("\n").join(" ").trim();
+    const truncatedString = contentOnSingleLine.split(" ").splice(0, 8).join(" ");
+    if (contentOnSingleLine.length > truncatedString.length + 3) {
+        return truncatedString + "...";
+    }
+    return truncatedString;
 }
 
 function createNotFoundMessage() {

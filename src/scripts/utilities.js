@@ -224,6 +224,7 @@ function handleHelpStudyCommand(message) {
 					name: 'Format',
 					value: `
 The study command requires
+- a title placed on the first line (beside the \`!study\` command)
 - a date in the format YYYY/MM/DD
 - a UTC time in HH:mm
 - a session length in H hours, mm minutes or a combination of both
@@ -235,7 +236,8 @@ This message should also contain a description of the session
 					value: `
 Sending a message like this:
 \`\`\`
-!study 2022/03/05 at 13:30 for 1 hour
+!study Grammar lesson
+2022/03/05 at 13:30 for 1 hour
 We'll be studying some fundamental Korean grammar!
 \`\`\`
 Results in the bot creating a study session and responding with a message that looks like this:
