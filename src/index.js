@@ -148,9 +148,9 @@ client.on("message", (message) => {
 
 	if (text.startsWith("!help")) {
 		handleHelpCommand(message);
-    return;
-  }
-  
+		return;
+	}
+
 	if (text.startsWith("!timezone")) {
 		convertBetweenTimezones(message);
 		return;
@@ -158,6 +158,9 @@ client.on("message", (message) => {
 });
 /* --------------------------------------------------- */
 
+client.on("messageUpdate", (oldMessage, newMessage) => {
+	explicitWordFilter(newMessage);
+});
 
 client.on("messageDelete", (message) => {
 	const text = (message.content ?? "").toLowerCase();
