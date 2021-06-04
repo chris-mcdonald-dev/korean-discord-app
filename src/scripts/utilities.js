@@ -14,7 +14,6 @@ function ping(message) {
 	setTimeout(() => {
 		message
 			.reply(" what do you want?")
-			.then(() => { })
 			.catch(console.error);
 		message.channel.stopTyping();
 	}, 7000);
@@ -66,7 +65,7 @@ function unPin50thMsg(channel) {
 				});
 			});
 		}
-	});
+	}).catch(console.error);
 }
 
 function getAllChannels(client) {
@@ -75,12 +74,27 @@ function getAllChannels(client) {
 		client.channels
 			.fetch(chnl.id)
 			.then((fullChannel) => {
+				if (!fullChannel.members.get(client.user.id)) {
+					return;
+				}
 				if (fullChannel.type === "text") {
 					unPin50thMsg(fullChannel);
 				}
 			})
 			.catch(console.error);
 	});
+}
+
+function isExercisesChannel(channel) {
+	return channel.id === process.env.EXERCISES_CHANNEL;
+}
+
+function isKoreanChannel(channel) {
+	return channel.id === process.env.KOREAN_CHANNEL;
+}
+
+function isLinksChannel(channel) {
+	return channel.id === process.env.LINKS_CHANNEL;
 }
 
 function logMessageDate() {
@@ -251,4 +265,4 @@ Results in the bot creating a study session and responding with a message that l
 	});
 }
 
-module.exports = { ping, getPinned, movePinned, unPin50thMsg, getAllChannels, logMessageDate, handleHelpCommand };
+module.exports = { ping, getPinned, movePinned, unPin50thMsg, getAllChannels, logMessageDate, isExercisesChannel, isKoreanChannel, isLinksChannel, handleHelpCommand };
