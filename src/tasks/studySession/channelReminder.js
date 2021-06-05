@@ -1,4 +1,4 @@
-const { getUpcomingStudySessionsForScheduler } = require('../../scripts/activities/study-session');
+const StudySession = require("mongoose").model("StudySession");
 const { getUTCFullDate } = require("../../utils/date");
 
 const upcomingStudySessionMessageContent = "Here are the upcoming study sessions:\n*Make sure to check the time zones!*";
@@ -71,6 +71,12 @@ function makeStudySessionMessage() {
             }
         };
     }).catch((error) => {
+        console.log(error);
+    });
+}
+
+function getUpcomingStudySessionsForScheduler() {
+    return StudySession.find({ startDate: { $gt: new Date() } }, null, { sort: "startDate" }).limit(5).catch((error) => {
         console.log(error);
     });
 }
