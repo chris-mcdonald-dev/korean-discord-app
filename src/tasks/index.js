@@ -6,7 +6,7 @@ const sendChannelReminder = studySessionTasks[1];
 const tasks = {
     "minute": [],
     "hour": [notifySubscribers],
-    "five-hour": [sendChannelReminder]
+    "day": [sendChannelReminder]
 };
 
 export default tasks;

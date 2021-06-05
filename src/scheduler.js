@@ -15,9 +15,9 @@ function runScheduler(client) {
         });
     }
 
-    if (tasks["five-hour"].length > 0) {
-        cron.schedule('0 */5 * * *', () => {
-            tasks["five-hour"].map((task) => task(client))
+    if (tasks["day"].length > 0) {
+        cron.schedule('0 12 * * *', () => {
+            tasks["day"].map((task) => task(client))
         });
     }
 }
