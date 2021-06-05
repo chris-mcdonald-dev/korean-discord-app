@@ -2,8 +2,6 @@ const { getUpcomingStudySessionsForScheduler } = require('../../scripts/activiti
 const { getUTCFullDate } = require("../../utils/date");
 
 const upcomingStudySessionMessageContent = "Here are the upcoming study sessions:\n*Make sure to check the time zones!*";
-const oneHour = 60 * 60 * 1000;
-const interval = oneHour * 5;
 
 export default function sendChannelReminder(client) {
     const studySessionChannel = client.channels.cache.get(process.env.STUDY_SESSION_CHANNEL);
@@ -28,21 +26,19 @@ export default function sendChannelReminder(client) {
 
         const mostRecentStudySessionMessage = studySessionMessages.first();
 
-        if (isMessageOlderThan5HoursAgo(mostRecentStudySessionMessage)) {
-            makeStudySessionMessage().then((studyMessage) => {
-                if (upcomingSessionsAreDifferent(mostRecentStudySessionMessage, studyMessage)) {
-                    mostRecentStudySessionMessage.delete().then(() => {
-                        studySessionChannel.send(studyMessage).catch((error) => {
-                            console.log(error);
-                        });
-                    }).catch((error) => {
+        makeStudySessionMessage().then((studyMessage) => {
+            if (upcomingSessionsAreDifferent(mostRecentStudySessionMessage, studyMessage)) {
+                mostRecentStudySessionMessage.delete().then(() => {
+                    studySessionChannel.send(studyMessage).catch((error) => {
                         console.log(error);
                     });
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
-        }
+                }).catch((error) => {
+                    console.log(error);
+                });
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
     }).catch(function (error) {
         console.log(error)
     });
@@ -56,10 +52,6 @@ function getMessagesMadeByTheBot(messages) {
 
 function isStudySessionMessage(message) {
     return message.content === upcomingStudySessionMessageContent;
-}
-
-function isMessageOlderThan5HoursAgo(message) {
-    return (new Date() - message.createdAt) > interval;
 }
 
 function makeStudySessionMessage() {

@@ -1,3 +1,12 @@
 import studySessionTasks from './studySession';
 
-export default [...studySessionTasks];
+const notifySubscribers = studySessionTasks[0];
+const sendChannelReminder = studySessionTasks[1];
+
+const tasks = {
+    "minute": [],
+    "hour": [notifySubscribers],
+    "five-hour": [sendChannelReminder]
+};
+
+export default tasks;
