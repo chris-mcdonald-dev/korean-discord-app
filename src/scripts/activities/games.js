@@ -74,9 +74,12 @@ function containsCommandForGame(messageContent, gameName) {
 	if (messageContent.includes(process.env.CLIENT_ID) && messageContent.includes(GAMES[gameName].commands.long)) {
 		return true;
 	}
-	if (messageContent.endsWith(GAMES[gameName].commands.short)) {
+	const shortCommand = GAMES[gameName].commands?.short;
+	const hangulCommand = GAMES[gameName].commands?.hangul;
+	if (messageContent.endsWith(shortCommand) || messageContent.endsWith(hangulCommand)) {
 		return true;
 	}
+	
 	return false;
 }
 

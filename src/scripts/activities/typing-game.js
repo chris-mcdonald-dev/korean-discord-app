@@ -103,6 +103,7 @@ function sendChallenge(message, word, definition) {
 }
 
 function handleMessageDuringGame(message) {
+    if (userRestartedGame(message)) return;
     try {
         if (message.content === answers[roundCount].word) {
             roundCount = roundCount + 1;
@@ -153,12 +154,23 @@ function handleMessageDuringGame(message) {
 }
 
 function endGame() {
-    resetGameVariables();
     clearTimeout(gameTimeout);
+    resetGameVariables();
 }
 
 function gameIsInProgress() {
     return gameInProgress;
+}
+
+function userRestartedGame(message) {
+    Object.keys(commands).forEach((command) => {
+        if (message.content.includes(commands[command])) {
+            endGame();
+            startGame(message);
+            return true;
+        }
+    })
+    return false;
 }
 
 module.exports = { gameName, commands, setUp, startGame, handleMessageDuringGame, endGame, gameIsInProgress };

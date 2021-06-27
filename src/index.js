@@ -94,14 +94,14 @@ client.on("message", (message) => {
 
 	// --- EXERCISES ---
 	switch (true) {
+		case gameIsRunning():
+			gameListener(message);
+			break;
 		case shouldStartGame(message, client):
 			startGame(message);
 			break;
 		case text.includes(process.env.CLIENT_ID) && text.includes("stop"):
 			endGame(message, true);
-			break;
-		case gameIsRunning():
-			gameListener(message);
 			break;
 	}
 
