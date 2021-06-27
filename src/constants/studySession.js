@@ -26,6 +26,19 @@ const STUDY_SESSION = {
 			description: "Do you want to create a study session? Please, provide a valid session length!\n\n*Just a reminder, the accepted format is `0 hour(s) and 00 minutes` for the session length.*",
 		},
 	},
+	UPDATE: {
+		SUCCESS: { content: `😉 Roger! Study session has been updated.` },
+		SUCCESS_WITH_SUBSCRIBERS: { content: `😉 Roger! All the participants will be notified in their DMs.` },
+		NOTIFICATION: (author, subscriber, sessionText) => ({
+			content: `Hey ${subscriber.username}! <@${author.id}> just updated a study session which you were subscribed to.`,
+			title: 'Updated study session',
+			description: sessionText
+		}),
+		ERROR: (error) => ({
+			title: "❌ Updating error",
+			description: `Oops! An error as occurred while updating the study session. Please try again!${error ? `\n\n*${error}*` : ""}`,
+		})
+	},
 	UPCOMING: {
 		SUCCESS: (sessions) => ({
 			title: "UPCOMING STUDY SESSIONS",

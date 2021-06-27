@@ -143,4 +143,42 @@ function cancelStudySessionFromDeletion(message) {
 	});
 }
 
-module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers, getUpcomingStudySessionsForScheduler };
+function updateStudySessionDetails(oldMessage, newMessage) {
+	const newText = newMessage.content;
+	const newStartDate = getStudySessionDate(newText);
+	const oldText = oldMessage.content;
+	const oldStartDate = getStudySessionDate(oldText);
+	if (newStartDate === oldStartDate) {
+		return;
+	}
+	return updateStudySessionStartDate(newMessage, newStartDate);
+}
+
+function updateStudySessionStartDate(message, startDate) {
+	const filter = {
+		"message.link": message.url
+	};
+	const update = {
+		startDate: startDate,
+		"message.text": message.content.replace("!study", "").trim()
+	};
+	const options = {
+		new: true,
+		lean: true
+	};
+	return StudySession.findOneAndUpdate(filter, update, options, (error, studySession) => {
+		if (error) return replyError(message, STUDY_SESSION.UPDATE.ERROR(error));
+		if (studySession.subscribersId?.length > 0) {
+			studySession.subscribersId.map((subscriberId) => {
+				message.client.users
+					.fetch(subscriberId)
+					.then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.UPDATE.NOTIFICATION(message.author, subscriber, studySession.message.text)))
+					.catch((error) => replyError(message, STUDY_SESSION.UPDATE.ERROR(error)));
+			});
+		}
+		const successMessage = studySession.subscribersId.length > 0 ? STUDY_SESSION.UPDATE.SUCCESS_WITH_SUBSCRIBERS : STUDY_SESSION.UPDATE.SUCCESS;
+		return replySuccess(message, successMessage);
+	});
+}
+
+module.exports = { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, notifySubscribers, getUpcomingStudySessionsForScheduler, updateStudySessionDetails };

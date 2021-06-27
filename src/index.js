@@ -20,7 +20,7 @@ const { isDm, handleDmReactionAdd } = require("./scripts/users/dm/dm");
 const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
 const { unPin50thMsg, getAllChannels, ping, handleHelpCommand } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
-const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession } = require("./scripts/activities/study-session");
+const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, updateStudySessionDetails } = require("./scripts/activities/study-session");
 const { convertBetweenTimezones } = require("./scripts/utility-commands/time-and-date");
 const { loadMessageReaction } = require("./utils/cache");
 const runScheduler = require("./scheduler").default;
@@ -160,6 +160,11 @@ client.on("message", (message) => {
 
 client.on("messageUpdate", (oldMessage, newMessage) => {
 	explicitWordFilter(newMessage);
+	oldMessage.fetch().then((oldMessage) => {
+		if (oldMessage.content.startsWith("!study")) {
+			updateStudySessionDetails(oldMessage, newMessage);
+		}
+	});
 });
 
 client.on("messageDelete", (message) => {
