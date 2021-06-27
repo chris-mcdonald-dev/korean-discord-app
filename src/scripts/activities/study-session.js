@@ -104,7 +104,7 @@ function cancelNotifySubscribers(message, studySession) {
 		return studySession.subscribersId.map((subscriberId) => {
 			message.client.users
 				.fetch(subscriberId)
-				.then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.CANCEL.NOTIFICATION(message.author, subscriber)))
+				.then((subscriber) => sendDirectMessage(subscriber, STUDY_SESSION.CANCEL.NOTIFICATION(message.author, subscriber, studySession)))
 				.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 		});
 }
@@ -124,7 +124,7 @@ function cancelStudySessionFromCommand(message) {
 		cancelNotifySubscribers(message, studySession);
 		studySession
 			.remove()
-			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) : STUDY_SESSION.CANCEL.SUCCESS(message.author)))
+			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author, studySession) : STUDY_SESSION.CANCEL.SUCCESS(message.author, studySession)))
 			.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 	}).catch((error) => {
 		console.log(error);
@@ -138,7 +138,7 @@ function cancelStudySessionFromDeletion(message) {
 		cancelNotifySubscribers(message, studySession);
 		studySession
 			.remove()
-			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author) : STUDY_SESSION.CANCEL.SUCCESS(message.author)))
+			.then(() => replySuccess(message, studySession.subscribersId.length > 0 ? STUDY_SESSION.CANCEL.SUCCESS_WITH_SUBSCRIBERS(message.author, studySession) : STUDY_SESSION.CANCEL.SUCCESS(message.author, studySession)))
 			.catch((error) => replyError(message, STUDY_SESSION.CANCEL.ERROR(error)));
 	});
 }

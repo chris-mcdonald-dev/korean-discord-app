@@ -79,9 +79,9 @@ const STUDY_SESSION = {
 	},
 	CANCEL: {
 		CONFIRMATION: (author) => ({ content: `😮 <@${author.id}> Do you really want to cancel this study session? This action is irreversible` }),
-		SUCCESS: (author) => ({ content: `😉 Roger! Study session has been cancelled. Looking forward to see you again, <@${author.id}>!` }),
-		SUCCESS_WITH_SUBSCRIBERS: (author) => ({ content: `😉 Roger! All the participants will be notified in their DMs. Looking forward to see you again, <@${author.id}>!` }),
-		NOTIFICATION: (author, subscriber) => ({ content: `Hey ${subscriber.username}! I'm sorry to tell you that <@${author.id}> just cancelled a study session to which you were subscribed. It happens! See you soon!` }),
+		SUCCESS: (author, studySession) => ({ content: `😉 Roger! ${getStudySessionCancellationInformation(studySession)}. Looking forward to see you again, <@${author.id}>!` }),
+		SUCCESS_WITH_SUBSCRIBERS: (author, studySession) => ({ content: `😉 Roger! ${getStudySessionCancellationInformation(studySession)}. All the participants will be notified in their DMs. Looking forward to see you again, <@${author.id}>!` }),
+		NOTIFICATION: (author, subscriber, studySession) => ({ content: `Hey ${subscriber.username}! I'm sorry to tell you that <@${author.id}> just cancelled ${getStudySessionCancellationSubscriberNotification(studySession)} to which you were subscribed. It happens! See you soon!` }),
 		TIME_ELAPSED: { content: "🕑 Tic, tac... One minute lapsed, let's say you didn't intend to cancel the session!" },
 		CANCEL: { content: "😁 Oh, you didn't mean it! Alright, happy to hear that we can maintain the study session!" },
 		ERROR: (error) => ({
@@ -128,6 +128,40 @@ function getUpcomingStudySessionSummary(message) {
 		return truncatedString + "...";
 	}
 	return truncatedString;
+}
+
+function getStudySessionCancellationInformation(studySession) {
+	const startDate = studySession.startDate;
+	const title = getTitle(studySession.message);
+	let cancellationMessage = "Your study session";
+	if (title) {
+		cancellationMessage = title;
+	}
+
+	return `${cancellationMessage} on ${getUTCFullDate(startDate, "date")} at ${getUTCFullDate(startDate, "time")} *(UTC)* has been cancelled`;
+}
+
+function getTitle(message) {
+	if (!message || !message.text) {
+		return "";
+	}
+
+	const text = message.text;
+	const firstLine = text.split("\n", 1)[0].trim();
+	if (firstLine.length > 0) {
+		return firstLine;
+	}
+}
+
+function getStudySessionCancellationSubscriberNotification(studySession) {
+	const startDate = studySession.startDate;
+	const title = getTitle(studySession.message);
+	let cancellationMessage = "their study session";
+	if (title) {
+		cancellationMessage = title;
+	}
+
+	return `${cancellationMessage} on ${getUTCFullDate(startDate, "date")} at ${getUTCFullDate(startDate, "time")} *(UTC)*`;
 }
 
 module.exports = { STUDY_SESSION };
