@@ -1,5 +1,5 @@
 const { getUpcomingStudySessionsForScheduler } = require('../../scripts/activities/study-session');
-const { getUTCFullDate } = require("../../utils/date");
+const { getDynamicDateTime } = require("../../utils/date");
 
 const upcomingStudySessionMessageContent = "Here are the upcoming study sessions:\n*Make sure to check the time zones!*";
 const oneHour = 60 * 60 * 1000;
@@ -69,7 +69,7 @@ function makeStudySessionMessage() {
                 title: "UPCOMING STUDY SESSIONS",
                 fields: upcomingStudySessions.map((session) => ({
                     name: `${session.author.username}'s study session`,
-                    value: `*${getUTCFullDate(session.startDate)} UTC (${session.estimatedLength} min)*\n${getUpcomingStudySessionSummary(session.message)} - Subscribe [here](${session.message?.link})`,
+                    value: `*${getDynamicDateTime(session.startDate, 'short date time')} (${session.estimatedLength} min)*\n${getUpcomingStudySessionSummary(session.message)} - Subscribe [here](${session.message?.link})`,
                 })),
                 color: "GREEN"
             }

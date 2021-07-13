@@ -21,7 +21,7 @@ const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
 const { unPin50thMsg, getAllChannels, ping, handleHelpCommand } = require("./scripts/utilities");
 const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, updateStudySessionDetails } = require("./scripts/activities/study-session");
-const { convertBetweenTimezones } = require("./scripts/utility-commands/time-and-date");
+const { createDynamicTime } = require("./scripts/utility-commands/time-and-date");
 const { loadMessageReaction } = require("./utils/cache");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
@@ -151,8 +151,8 @@ client.on("message", (message) => {
 		return;
 	}
 
-	if (text.startsWith("!timezone")) {
-		convertBetweenTimezones(message);
+	if (text.startsWith("!time")) {
+		createDynamicTime(message);
 		return;
 	}
 });

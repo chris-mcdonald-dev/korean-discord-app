@@ -1,35 +1,18 @@
-const { DateTime } = require("luxon");
+const { getDynamicDateTime, DATE_FORMAT } = require("../../utils/date");
 
-function convertBetweenTimezones(message) {
+const COMMAND = "!time";
+
+function createDynamicTime(message) {
     let text = message.content ?? "";
-    if (text.length < 10) {
-        return;
-    }
-    text = text.substring(9).trim();
-
-    const dateTime = getDateTimeFromMessage(text);
-    if (dateTime === null) {
-        message.reply("please provide a valid datetime in the format YYYY/MM/DD HH:mm");
+    if (text.length < COMMAND.length) {
         return;
     }
 
-    const timezones = getTimeZonesFromMessage(text);
-    if (timezones === null || timezones.length === 0) {
-        message.reply("please provide at least one valid timezone to convert to. \n\nFor more information use `!help timezone`");
-        return;
-    }
+    text = text.substring(5).trim();
+    const dateTime = getDateTimeFromMessage(text) ?? new Date();
 
-    let convertedTimes = [];
-    timezones.forEach(timezone => {
-        const convertedTime = dateTime.setZone(timezone);
-        if (convertedTime.invalid === null) {
-            const timeZoneAbbreviation = convertedTime.offsetNameLong;
-            const dateTimeString = `${convertedTime.weekdayShort}, ${convertedTime.day} ${convertedTime.monthShort} at ${convertedTime.toFormat('HH:mm')} *(${timeZoneAbbreviation})*`;
-            convertedTimes.push(dateTimeString);
-        }
-    });
-
-    message.channel.send(convertedTimes.join('\n'));
+    const dynamicDateTimeString = getDynamicDateTime(dateTime, getFormat(text));
+    message.channel.send(`${dynamicDateTimeString}\n\nAdd this dynamic time to your messages using \`${dynamicDateTimeString}\`\nUse \`!help time\` for more information.`);
 }
 
 function getDateTimeFromMessage(text) {
@@ -41,12 +24,14 @@ function getDateTimeFromMessage(text) {
     if (isNaN(jsDate.getTime())) {
         return null;
     }
-    return DateTime.fromISO(jsDate.toISOString());
+    return jsDate;
 }
 
-function getTimeZonesFromMessage(text) {
-    const timezoneRegex = /([A-Za-z]+[\/][A-Za-z0-9_\-+]*)/g;
-    return text.match(timezoneRegex);
+function getFormat(text) {
+    const keys = Object.keys(DATE_FORMAT);
+    const formatPattern = new RegExp(`(${keys.join('|').replaceAll('_', ' ')})`);
+    const maybeFormat = text.toUpperCase().match(formatPattern);
+    return maybeFormat ? maybeFormat[0] : null;
 }
 
-module.exports = { convertBetweenTimezones };
+module.exports = { createDynamicTime };
