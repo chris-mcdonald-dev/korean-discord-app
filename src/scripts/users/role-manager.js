@@ -1,27 +1,30 @@
-const RoleMessage = require("mongoose").model("RoleMessage");
+const { MessageMenuOption, MessageMenu, MessageActionRow } = require('discord-buttons');
 
 const COMMAND = "!role message";
+const EMOJI_ROLE_ID_DELIMITER = ':';
+const ROLE_ID_DESCRIPTION_DELIMITER = '-';
+const ROLE_SELECTION_MESSAGE = "Select your roles here!";
 
 function handleRoleMessage(message) {
-    if (!isRoleMessage(message)) {
+    if (!isRoleSelectCreationMessage(message)) {
         return;
     }
     if (!messageAuthorIsMod(message)) {
         return;
     }
-    const roleReactionStrings = getLinesWhichContainRoleReactionPairs(message);
-    if (!roleReactionStrings) {
+    const roleOptionStrings = getLinesWhichContainRoleOptionData(message);
+    if (!roleOptionStrings) {
         return;
     }
-    const roleReactions = createRoleReactionForDatabase(roleReactionStrings);
-    if (!roleReactions || roleReactions.length === 0) {
+    const roleOptions = createRoleOptionsArray(message, roleOptionStrings);
+    if (!roleOptions || roleOptions.length === 0) {
         return;
     }
 
-    createRoleReactionsForMessage(message, roleReactions);
+    createRoleOptionsForMessage(message, roleOptions);
 }
 
-function isRoleMessage(message) {
+function isRoleSelectCreationMessage(message) {
     return message.content.toLowerCase().startsWith(COMMAND);
 }
 
@@ -29,118 +32,153 @@ function messageAuthorIsMod(message) {
     return Boolean(message.member.roles.cache.get(process.env.MODERATORS));
 }
 
-function getLinesWhichContainRoleReactionPairs(message) {
-    return message.content.split('\n').filter(function (line) {
-        const validRoleReactionRegex = /[\p{Emoji}]{1}.*:.*<@&\d+>/u;
-        return validRoleReactionRegex.test(line);
-    });
+function getLinesWhichContainRoleOptionData(message) {
+    const validRoleOptionRegex = /[\p{Emoji}]{1}.*:.*\d+/u;
+    return message.content.split('\n').filter((line) => validRoleOptionRegex.test(line));
 }
 
-function createRoleReactionForDatabase(roleReactionStrings) {
-    return roleReactionStrings.map(function (roleReactionString) {
-        const reaction = roleReactionString.match(/[\p{Emoji}]{1}/u)[0];
-        const role = roleReactionString.split(':')[1].match(/\d+/g)[0];
+function createRoleOptionsArray(message, roleOptionStrings) {
+    return roleOptionStrings.map((roleOptionString) => {
+        const reaction = roleOptionString.match(/[\p{Emoji}]{1}/u)[0];
+        const roleId = roleOptionString.split(EMOJI_ROLE_ID_DELIMITER)[1].match(/\d+/g)[0];
+        const role = message.guild.roles.cache.get(roleId);
+        const roleDescription = getRoleDescription(roleOptionString);
         return {
-            reactionName: reaction,
-            roleId: role
+            emojiName: reaction,
+            roleId: role ? role.id : undefined,
+            roleName: role ? role.name : undefined,
+            roleDescription: roleDescription
         }
+    }).filter((roleOption) => {
+        return roleOption.roleId !== undefined && roleOption.roleName !== undefined;
     });
 }
 
-function createRoleReactionsForMessage(message, roleReactions) {
-    RoleMessage.create({
-        messageId: message.id,
-        channelId: message.channel.id,
-        roleReactions: roleReactions
-    }).then(function () {
-        addReactionsToMessage(message, roleReactions);
-    }).catch(function (error) {
-        console.log(error);
-    });
+function getRoleDescription(roleOptionString) {
+    // pulls a "description" from a line of the format {emoji}:{roleId} - {description}
+    const maybeDescriptionArray = roleOptionString.split(ROLE_ID_DESCRIPTION_DELIMITER);
+    // remove the first item of the array (everything preceding the delimiter)
+    maybeDescriptionArray.shift();
+    // rejoin on the delimiter in case there were occurences in the description itself
+    return maybeDescriptionArray.join(ROLE_ID_DESCRIPTION_DELIMITER).trim();
 }
 
-function addReactionsToMessage(message, roleReactions) {
-    roleReactions.forEach(function (roleReaction) {
-        message.react(roleReaction.reactionName).catch(function (error) {
-            console.log(error);
-        });
-    });
+function createRoleOptionsForMessage(userMessage, roleOptions) {
+    createRoleOptionsMessage(userMessage, roleOptions)
+        .then(() => {
+            userMessage.delete().catch(console.log);
+        }).catch(console.log);
 }
 
-function handleRolesOnReactionAdd(user, message, emoji) {
-    RoleMessage.findOne({
-        messageId: message.id,
-        channelId: message.channel.id,
-        "roleReactions.reactionName": emoji.name
-    }, null, {}, function (error, roleMessageModel) {
-        if (error) {
-            console.log(error);
+function createRoleOptionsMessage(message, roleOptions) {
+    const menuOptions = createOptions(roleOptions);
+    const menu = createMenu(message.id, menuOptions);
+    const reactionActionRow = new MessageActionRow().addComponent(menu);
+
+    return message.channel.send(null, {
+        embed: createEmbed(message, roleOptions),
+        components: [reactionActionRow]
+    }).catch(console.log);
+}
+
+function createOptions(roleOptions) {
+    return roleOptions.map((roleOption) => {
+        return createMenuOption(
+            roleOption.roleName,
+            roleOption.roleId,
+            roleOption.emojiName,
+            roleOption.roleDescription
+        );
+    })
+}
+
+function createMenuOption(title, value, emoji, description) {
+    return new MessageMenuOption()
+        .setLabel(title)
+        .setValue(value)
+        .setEmoji(emoji)
+        .setDescription(description);
+}
+
+function createMenu(id, options) {
+    return new MessageMenu()
+        .setID(id)
+        .setPlaceholder(ROLE_SELECTION_MESSAGE)
+        .addOptions(options)
+        .setMaxValues(options.length)
+        .setMinValues('0'); // bug in discord-buttons where setting the minimum to 0 with a number doesn't work
+}
+
+function createEmbed(message, roleOptions) {
+    const content = createEmbedContent(message, roleOptions);
+    const contentLinesArray = content.split('\n');
+    const title = contentLinesArray.shift();
+    const description = contentLinesArray.join('\n').trim();
+
+    return {
+        title: title,
+        description: description,
+        footer: {
+            text: "Select the roles you want from the drop-down list below. Leaving any roles in the list deselected will remove you from those roles."
+        }
+    }
+}
+
+function createEmbedContent(userMessage, roleOptions) {
+    let messageContent = userMessage.content.replace(COMMAND, "");
+    roleOptions.forEach((roleOption) => {
+        messageContent = messageContent.replace(roleOption.roleId, roleOption.roleName);
+    })
+    return messageContent.trim() || 'Member role selection';
+}
+
+function handleRoleSelect(menu) {
+    if (!isRoleSelectMessage(menu)) {
+        return;
+    }
+    menu.reply.defer();
+    const user = menu.clicker.user;
+    const options = menu.message.components[0].components[0].options
+    // Iterate over every roleId in the menu
+    options.forEach((option) => {
+        if (menu.values.includes(option.value)) {
+            // Any roleId that has been selected is assigned to the user
+            addUserToRole(user, option.value);
             return;
         }
-        if (!roleMessageModel) {
-            return;
-        }
-        const roleReaction = getRoleReactionFromModel(emoji, roleMessageModel);
-        addUserToRole(user, roleReaction);
-    }).lean();
-}
-
-function getRoleReactionFromModel(emoji, roleMessageModel) {
-    return roleMessageModel.roleReactions.find(function (roleReaction) {
-        return roleReaction.reactionName === emoji.name;
+        // Any roleId that hasn't been selected is unassigned from the user
+        removeUserFromRole(user, option.value);
     });
 }
 
-function addUserToRole(user, roleReaction) {
+function addUserToRole(user, roleId) {
     user.client.guilds.cache
         .get(process.env.SERVER_ID).members.cache
         .get(user.id).roles
-        .add(roleReaction.roleId)
+        .add(roleId)
         .catch(function (error) {
             console.log(error);
         });
 }
 
-function handleRolesOnReactionRemove(user, message, emoji) {
-    RoleMessage.findOne({
-        messageId: message.id,
-        channelId: message.channel.id,
-        "roleReactions.reactionName": emoji.name
-    }, null, {}, function (error, roleMessageModel) {
-        if (error) {
-            console.log(error);
-            return;
-        }
-        if (!roleMessageModel) {
-            return;
-        }
-        const roleReaction = getRoleReactionFromModel(emoji, roleMessageModel);
-        removeUserFromRole(user, roleReaction);
-    }).lean();
-}
-
-function removeUserFromRole(user, roleReaction) {
+function removeUserFromRole(user, roleId) {
     user.client.guilds.cache
         .get(process.env.SERVER_ID).members.cache
         .get(user.id).roles
-        .remove(roleReaction.roleId)
+        .remove(roleId)
         .catch(function (error) {
             console.log(error);
         });
 }
 
-function handleRoleMessageDelete(message) {
-    RoleMessage.deleteOne({
-        messageId: message.id,
-        channelId: message.channel.id
-    }).catch(function (error) {
-        console.log(error);
-    });
+function isRoleSelectMessage(menu) {
+    if (menu.message.author.id !== process.env.CLIENT_ID) {
+        return false;
+    }
+    return menu.message.components[0].components[0].placeholder === ROLE_SELECTION_MESSAGE;
 }
 
 export {
-    handleRolesOnReactionAdd,
-    handleRolesOnReactionRemove,
     handleRoleMessage,
-    handleRoleMessageDelete
+    handleRoleSelect
 }

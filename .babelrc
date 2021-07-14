@@ -1,7 +1,6 @@
 {
     "plugins": [
-        "@babel/plugin-proposal-throw-expressions",
-        "@babel/plugin-proposal-unicode-property-regex"
+        "@babel/plugin-proposal-throw-expressions"
     ],
     "presets": [
         "@babel/preset-env"
