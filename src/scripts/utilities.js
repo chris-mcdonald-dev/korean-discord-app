@@ -88,8 +88,8 @@ function logMessageDate() {
 }
 
 function handleHelpCommand(message) {
-	if (message.content.startsWith('!help timezone')) {
-		handleHelpTimezoneCommand(message);
+	if (message.content.startsWith('!help time')) {
+		handleHelpTimeCommand(message);
 		return;
 	}
 	if (message.content.startsWith('!help cancel study')) {
@@ -119,11 +119,11 @@ You can cancel a study session either by deleting the message used to create the
 					`
 				},
 				{
-					name: 'Timezones',
+					name: 'Time',
 					value: `
-Use \`!timezone\` to convert a date-time to equivalent date-times in different regions
+Use \`!time\` to generate a dynamic date-time which shows the correct time to each user based on their local timezone
 
-Use \`!help timezone\` for more information
+Use \`!help time\` for more information
 					`
 				}, {
 					name: 'Bookmarks',
@@ -143,36 +143,40 @@ Any message the bot sends via DM can be deleted by applying an 'x' (❌) reactio
 	});
 }
 
-function handleHelpTimezoneCommand(message) {
+function handleHelpTimeCommand(message) {
+	const currentTime = Math.round(new Date().getTime() / 1000);
 	message.channel.send(null, {
 		embed: {
-			title: "The !timezone command",
+			title: "The !time command",
 			fields: [
 				{
 					name: 'Description',
-					value: 'The `!timezone` command can be used to convert a date-time into date-times around the world'
+					value: 'The `!time` command can be used to generate a dynamic date-time'
 				}, {
 					name: 'Format',
 					value: `
-This requires a date in the format YYYY/MM/DD and a UTC time in HH:mm followed by any number of [TZ database names](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List)
+This command optionally takes a UTC date-time in the format YYYY/MM/DD HH:mm and an output type
+
+If a date is not supplied it will use the current date and time
+If an output type is not supplied it will use the default output type ("short date time")
 					`
 				}, {
-					name: 'Example',
+					name: 'Examples',
 					value: `
-If you've created a study session with these details
-\`\`\`
-!study 2022/03/05 at 13:30 ...
-\`\`\`
-You can get the equivalent date-times in Toronto, London and Seoul using
-\`\`\`
-!timezone 2022/03/05 13:30 America/Toronto Europe/London Asia/Seoul
-\`\`\`
-Which creates this response:
-\`\`\`
-Sat, 5 Mar at 08:30 (Eastern Standard Time)
-Sat, 5 Mar at 13:30 (Greenwich Mean Time)
-Sat, 5 Mar at 22:30 (Korean Standard Time)
-\`\`\`
+\`!time\` on its own will generate <t:${currentTime}:f>
+\`!time short time\` will generate <t:${currentTime}:t>
+\`!time 2021/07/29 22:00 relative\` will generate <t:1627592400:R>
+					`
+				}, {
+					name: 'Output types',
+					value: `
+short date: <t:${currentTime}:d>
+long date: <t:${currentTime}:D>
+short time: <t:${currentTime}:t>
+long time: <t:${currentTime}:T>
+short date time: <t:${currentTime}:f>
+long date time: <t:${currentTime}:F>
+relative: <t:${currentTime}:R>
 					`
 				}
 			]

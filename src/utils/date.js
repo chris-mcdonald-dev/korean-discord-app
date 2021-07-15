@@ -1,31 +1,23 @@
-function getUTCFullDate(date, separateIntoGroups = "") {
-	if (!date) return "";
-	const dateUTC = date.toUTCString();
+const DATE_FORMAT = Object.freeze({
+	SHORT_DATE_TIME: 'f',
+	LONG_DATE_TIME: 'F',
+	SHORT_DATE: 'd',
+	LONG_DATE: 'D',
+	SHORT_TIME: 't',
+	LONG_TIME: 'T',
+	RELATIVE: 'R'
+});
 
-	// Optionally separate date, year, time, and timezone into groups
-	const separateRegEx = /(?<onlyDate>\w{3},\s\d+\s\w{3})\s(?<year>\d{4})\s(?<time>\d+:\d+).+(?<zone>\w{3})/;
-	const { onlyDate, year, time, zone } = dateUTC.match(separateRegEx).groups;
-	switch (separateIntoGroups) {
-		case "date":
-			return onlyDate;
-		case "year":
-			return year;
-		case "time":
-			return time;
-		case "zone":
-			return zone;
-	}
-
-	return dateUTC.substr(0, dateUTC.length - 7); // Remove seconds and GMT string
+function getDynamicDateTime(date, outputFormat) {
+	const format = outputFormat ? DATE_FORMAT[outputFormat.toUpperCase().replaceAll(' ', '_')] : 'f'
+	return `<t:${removeMilliseconds(date)}:${format}>`
 }
 
-function getUTCFullTime(date) {
-	if (!date) return "";
-	const hour = date.getUTCHours();
-	const min = date.getUTCMinutes();
-	const fullHour = hour >= 10 ? hour : `0${hour}`;
-	const fullMin = min > 10 ? min : `0${min}`;
-	return `${fullHour}:${fullMin}`;
+/**
+ * @description JavaScript includes milliseconds but Discord's dynamic datetime feature only supports up to second precision
+ */
+function removeMilliseconds(date) {
+	return Math.round(date.getTime() / 1000);
 }
 
-module.exports = { getUTCFullDate, getUTCFullTime };
+module.exports = { getDynamicDateTime, DATE_FORMAT };
