@@ -62,7 +62,7 @@ const STUDY_SESSION = {
 			content: `👋 Hey ${subscriber.username}, you successfully registered to <@${author.id}> study session! See you soon!`,
 			description: messageContent.substr(6).trim(),
 		}),
-		REMINDER: (studySession, subscriber) => ({ content: `👋 How is your day going, ${subscriber.username}? Thank you for waiting, <@${studySession.author.id}>'s study session is starting soon! See you on the Korean Study Group server at **${getUTCFullTime(studySession.startDate)} UTC**!\n*Make sure to check the time zone!*` }),
+		REMINDER: (studySession, subscriber) => ({ content: `👋 How is your day going, ${subscriber.username}? Thank you for waiting, <@${studySession.author.id}>'s study session is starting in an hour! See you on the Korean Study Group server at **${getUTCFullTime(studySession.startDate)} UTC**!\n*Make sure to check the time zone!*` }),
 		ERROR: (author, error) => ({
 			content: `${author.username}, you just tried to subscribe to a study session. Thanks for your participation! However, an error as occurred during the process. Please try again! (and don't hesitate to notify <@202787014502776832> about this error)`,
 			title: "❌ Subscription error",
