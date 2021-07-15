@@ -1,6 +1,7 @@
 /* ___________ REQUIRE CORE DEPENDENCIES AND CONFIG FILES ___________ */
 
 const Discord = require("discord.js");
+const DiscordButtons = require('discord-buttons');
 require("dotenv").config();
 require("./connections/google-sheets-conn");
 require("./database");
@@ -23,12 +24,14 @@ const { typingGame, typingGameListener, endTypingGame, gameExplanation } = requi
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, updateStudySessionDetails } = require("./scripts/activities/study-session");
 const { convertBetweenTimezones } = require("./scripts/utility-commands/time-and-date");
 const { loadMessageReaction } = require("./utils/cache");
+const { handleRoleMessage, handleRoleSelect } = require("./scripts/users/role-manager");
 const runScheduler = require("./scheduler").default;
 /* ------------------------------------------------------ */
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
 const client = new Discord.Client({ partials: ["CHANNEL", "MESSAGE", "REACTION"] });
+DiscordButtons(client);
 
 const users = {}; // Message counter object for users
 const chnlMsgs = {}; // Separate message counter object unrelated to users
@@ -155,6 +158,8 @@ client.on("message", (message) => {
 		convertBetweenTimezones(message);
 		return;
 	}
+
+	handleRoleMessage(message);
 });
 /* --------------------------------------------------- */
 
@@ -250,6 +255,10 @@ client.on("guildMemberUpdate", (oldMember, newMember) => {
 	}
 });
 /* ------------------------------------------------- */
+
+client.on('clickMenu', (menu) => {
+	handleRoleSelect(menu);
+});
 
 /* ________________ FINALLY LOG IN TO DISCORD ________________ */
 
