@@ -71,16 +71,17 @@ function sendWrongChannelMessage(client, message) {
 }
 
 function containsCommandForGame(messageContent, gameName) {
-	if (messageContent.includes(process.env.CLIENT_ID) && messageContent.includes(GAMES[gameName].commands.long)) {
-		return true;
+	const commands = [GAMES[gameName].commands.short, GAMES[gameName].commands.long];
+	if (GAMES[gameName].commands.hangul) {
+		commands.push(GAMES[gameName].commands.short)
 	}
-	const shortCommand = GAMES[gameName].commands?.short;
-	const hangulCommand = GAMES[gameName].commands?.hangul;
-	if (messageContent.endsWith(shortCommand) || messageContent.endsWith(hangulCommand)) {
-		return true;
-	}
-	
-	return false;
+	const commandPrefixRegex = `\!`;
+	const botMentionRegex = `\<\@\!?${process.env.CLIENT_ID}\>\s?${commandPrefixRegex}?`;
+	const gameStartCommandRegex = `${commands.join('|')}`;
+	const commandRegex = new RegExp(
+		`^((${botMentionRegex})|${commandPrefixRegex})(${gameStartCommandRegex})\b`
+	);
+	return commandRegex.test(messageContent);
 }
 
 function startGame(message) {
