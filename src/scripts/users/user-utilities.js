@@ -1,6 +1,6 @@
 // Checks if users qualify for The Regulars role.
 function regularQualifyCheck(message) {
-	if (message.member.hasPermission("MANAGE_ROLES")) return;
+	if (message.member.permissions.has("MANAGE_ROLES")) return;
 	global.guild.roles.fetch(process.env.ACTIVE_ROLE).then((regularRole) => {
 		if (message.member.roles.cache.find((r) => r.name === regularRole.name)) return;
 		let i = 0;

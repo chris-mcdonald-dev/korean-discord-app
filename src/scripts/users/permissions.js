@@ -1,7 +1,7 @@
 function mute(message) {
-	message.channel.updateOverwrite(message.author, { SEND_MESSAGES: false });
+	message.channel.permissionOverwrites.create(message.author, { SEND_MESSAGES: false });
 	setTimeout(() => {
-		message.channel.updateOverwrite(message.author, { SEND_MESSAGES: true });
+		message.channel.permissionOverwrites.create(message.author, { SEND_MESSAGES: true });
 		console.log("UNMUTING!");
 	}, 60000);
 	if (typeof global.mutedUsers === "undefined") {
@@ -12,21 +12,21 @@ function mute(message) {
 }
 
 function manualUnMute(message, target, client) {
-	if (!message.member.hasPermission("MANAGE_ROLES")) return;
+	if (!message.member.permissions.has("MANAGE_ROLES")) return;
 	client.users
 		.fetch(target)
 		.then((user) => {
-			message.channel.updateOverwrite(user, { SEND_MESSAGES: true });
+			message.channel.permissionOverwrites.create(user, { SEND_MESSAGES: true });
 			message.channel.send(`Unmuting ${user} in ${message.channel}.`);
 		})
 		.catch(console.error);
 }
 
 function unMuteAll(message) {
-	if (!message.member.hasPermission("MANAGE_ROLES")) return;
+	if (!message.member.permissions.has("MANAGE_ROLES")) return;
 	if (typeof global.mutedUsers != "undefined") {
 		global.mutedUsers.forEach((user) => {
-			message.channel.updateOverwrite(user, { SEND_MESSAGES: true });
+			message.channel.permissionOverwrites.create(user, { SEND_MESSAGES: true });
 		});
 		message.channel.send(`Unmuting ${global.mutedUsers} in this channel.`);
 	} else {

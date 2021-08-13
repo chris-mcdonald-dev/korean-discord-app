@@ -1,27 +1,25 @@
 // Ping Test
 function ping(message) {
 	setTimeout(() => {
-		message.channel.startTyping();
+		message.channel.sendTyping();
 	}, 1500);
 	setTimeout(() => {
 		message.channel.send(" :rolling_eyes: omg");
-		message.channel.stopTyping();
 	}, 4000);
 
 	setTimeout(() => {
-		message.channel.startTyping();
+		message.channel.sendTyping();
 	}, 4500);
 	setTimeout(() => {
 		message
 			.reply(" what do you want?")
 			.then(() => { })
 			.catch(console.error);
-		message.channel.stopTyping();
 	}, 7000);
 }
 
 function getPinned(message) {
-	if (!message.member.hasPermission("MANAGE_ROLES")) return;
+	if (!message.member.permissions.has("MANAGE_ROLES")) return;
 	message.channel.messages
 		.fetchPinned()
 		.then((messages) => {
@@ -33,7 +31,7 @@ function getPinned(message) {
 }
 
 function movePinned(message, pinnedMessages) {
-	if (!message.member.hasPermission("MANAGE_ROLES")) return;
+	if (!message.member.permissions.has("MANAGE_ROLES")) return;
 	if (typeof pinnedMessages === "undefined") {
 		message.channel.send("You didn't give me anything to copy. :sweat_smile:");
 		return;
@@ -100,8 +98,9 @@ function handleHelpCommand(message) {
 		handleHelpStudyCommand(message);
 		return;
 	}
-	message.channel.send(null, {
-		embed: {
+	message.channel.send({
+		content: " ",
+		embeds: [{
 			title: "Little LyonHeart ♡ features",
 			fields: [
 				{
@@ -139,13 +138,14 @@ Any message the bot sends via DM can be deleted by applying an 'x' (❌) reactio
 					value: `Use the \`!help\` command to bring up a list of Little LyonHeart ♡'s available features`
 				}
 			]
-		}
+		}]
 	});
 }
 
 function handleHelpTimezoneCommand(message) {
-	message.channel.send(null, {
-		embed: {
+	message.channel.send({
+		content: " ",
+		embeds: [{
 			title: "The !timezone command",
 			fields: [
 				{
@@ -176,13 +176,14 @@ Sat, 5 Mar at 22:30 (Korean Standard Time)
 					`
 				}
 			]
-		}
+		}]
 	});
 }
 
 function handleHelpCancelStudyCommand(message) {
-	message.channel.send(null, {
-		embed: {
+	message.channel.send({
+		content: " ",
+		embeds: [{
 			title: "The !cancel study command",
 			fields: [
 				{
@@ -208,13 +209,14 @@ You can cancel the session with
 					`
 				}
 			]
-		}
+		}]
 	});
 }
 
 function handleHelpStudyCommand(message) {
-	message.channel.send(null, {
-		embed: {
+	message.channel.send({
+		content: " ",
+		embeds: [{
 			title: "The !study command",
 			fields: [
 				{
@@ -247,7 +249,7 @@ Results in the bot creating a study session and responding with a message that l
 			image: {
 				url: 'https://i.imgur.com/SczgdyX.png'
 			}
-		}
+		}]
 	});
 }
 

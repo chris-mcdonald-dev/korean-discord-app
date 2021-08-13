@@ -7,7 +7,7 @@ const warnOn = 8;
 const muteAfter = 10;
 
 function koreanObserver(message, chnlMsgs, client) {
-	if (message.member.hasPermission("MANAGE_ROLES")) return;
+	if (message.member.permissions.has("MANAGE_ROLES")) return;
 	client.channels
 		.fetch(process.env.KOREAN_CHANNEL)
 		.then((channel) => {

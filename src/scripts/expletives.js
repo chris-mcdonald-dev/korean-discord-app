@@ -52,7 +52,7 @@ function explicitWordFilter(message) {
 		message.delete();
 		message.channel.send(`${message.author} wrote: "${newMessage}"`);
 		console.log(`Edited ${message.content} to ${newMessage}`);
-		message.reply("\nHey! \nI said no bad words! If you don't want to play nice, I'm taking my ball and going home!");
+		message.channel.send(`${message.author},\nHey!\nI said no bad words! If you don't want to play nice, I'm taking my ball and going home!`);
 		return true;
 	}
 	return false;

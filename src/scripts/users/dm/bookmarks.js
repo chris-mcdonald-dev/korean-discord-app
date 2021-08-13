@@ -1,8 +1,8 @@
 function addBookmark(user, message) {
     return user.send({
         content: `${message.url}\n\n${message.author.username} said:\n${message.content}`,
-        files: message.attachments ? message.attachments.array() : null,
-        embed: message.embeds ? message.embeds[0] : null
+        files: message.attachments ? [...message.attachments.values()] : null,
+        embeds: message.embeds
     }).catch(function (error) {
         console.log(error)
     });

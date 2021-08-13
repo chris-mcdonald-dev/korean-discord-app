@@ -65,14 +65,14 @@ function makeStudySessionMessage() {
         }
         return {
             content: upcomingStudySessionMessageContent,
-            embed: {
+            embeds: [{
                 title: "UPCOMING STUDY SESSIONS",
                 fields: upcomingStudySessions.map((session) => ({
                     name: `${session.author.username}'s study session`,
                     value: `*${getUTCFullDate(session.startDate)} UTC (${session.estimatedLength} min)*\n${getUpcomingStudySessionSummary(session.message)} - Subscribe [here](${session.message?.link})`,
                 })),
                 color: "GREEN"
-            }
+            }]
         };
     }).catch((error) => {
         console.log(error);
@@ -101,10 +101,10 @@ function getUpcomingStudySessionSummary(message) {
 function createNotFoundMessage() {
     return {
         content: upcomingStudySessionMessageContent,
-        embed: {
+        embeds: [{
             title: "🙈 No sessions found",
             description: "Oops! Looks like there are no sessions scheduled right now",
             color: 'RED'
-        }
+        }]
     };
 }
