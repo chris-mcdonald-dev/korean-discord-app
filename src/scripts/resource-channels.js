@@ -9,7 +9,7 @@ const timeouts = {};
 
 // Resource Channel Spam Observer
 function resourcesObserver(message, users, client) {
-	if (message.member.hasPermission("MANAGE_ROLES")) return; // Ignores admins
+	if (message.member.permissions.has("MANAGE_ROLES")) return; // Ignores admins
 	if (checkIfResource(message)) return;
 
 	const id = message.author.id;

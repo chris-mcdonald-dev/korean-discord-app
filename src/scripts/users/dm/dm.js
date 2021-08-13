@@ -1,5 +1,5 @@
 function isDm(message) {
-    return message.channel.type === 'dm';
+    return message.channel.type === 'DM';
 }
 
 function handleDmReactionAdd(emoji, message) {

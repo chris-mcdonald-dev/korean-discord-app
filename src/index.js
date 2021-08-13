@@ -1,6 +1,6 @@
 /* ___________ REQUIRE CORE DEPENDENCIES AND CONFIG FILES ___________ */
 
-const Discord = require("discord.js");
+const { Client, Intents } = require('discord.js');
 require("dotenv").config();
 require("./connections/google-sheets-conn");
 require("./database");
@@ -28,7 +28,17 @@ const runScheduler = require("./scheduler").default;
 
 /* ________________ DECLARE MAIN VARIABLES ________________ */
 
-const client = new Discord.Client({ partials: ["CHANNEL", "MESSAGE", "REACTION"] });
+const client = new Client({
+	intents: [
+		Intents.FLAGS.GUILDS,
+		Intents.FLAGS.GUILD_MEMBERS,
+		Intents.FLAGS.GUILD_MESSAGES,
+		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+		Intents.FLAGS.DIRECT_MESSAGES,
+		Intents.FLAGS.DIRECT_MESSAGE_REACTIONS
+	],
+	partials: ["CHANNEL", "MESSAGE", "REACTION"]
+});
 
 const users = {}; // Message counter object for users
 const chnlMsgs = {}; // Separate message counter object unrelated to users
@@ -62,7 +72,7 @@ client.on("ready", () => {
 
 /* ________________ MAIN MESSAGE LISTENER ________________ */
 
-client.on("message", (message) => {
+client.on("messageCreate", (message) => {
 	if (isMessageIgnored(message)) return;
 	const text = (message.content ?? "").toLowerCase();
 
@@ -76,20 +86,20 @@ client.on("message", (message) => {
 	// Sends typing game explanation to exercise channel
 	gameExplanation(message);
 
-	if (text.includes("wake up") && text.includes(process.env.CLIENT_ID)) {
+	if (text.includes("wake up") && message.mentions.has(process.env.CLIENT_ID)) {
 		// Bot's ID
 		ping(message);
 		return;
 	}
-	if (text.includes("unmute everyone") && text.includes(process.env.CLIENT_ID)) {
+	if (text.includes("unmute everyone") && message.mentions.has(process.env.CLIENT_ID)) {
 		unMuteAll(message);
 		return;
 	}
-	if (text.includes("copy") && text.includes("pins") && text.includes(process.env.CLIENT_ID)) {
+	if (text.includes("copy") && text.includes("pins") && message.mentions.has(process.env.CLIENT_ID)) {
 		getPinned(message);
 		return;
 	}
-	if (text.includes("paste") && text.includes("pins") && text.includes(process.env.CLIENT_ID)) {
+	if (text.includes("paste") && text.includes("pins") && message.mentions.has(process.env.CLIENT_ID)) {
 		movePinned(message, global.pinnedMessages);
 		return;
 	}
@@ -99,11 +109,11 @@ client.on("message", (message) => {
 
 	switch (true) {
 		// Start Typing Game
-		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t" || text === "!ㅌ":
+		case (message.mentions.has(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t" || text === "!ㅌ":
 			typingGame(message, client);
 			break;
 		// Stop Typing Game
-		case text.includes(process.env.CLIENT_ID) && text.includes("stop"):
+		case message.mentions.has(process.env.CLIENT_ID) && text.includes("stop"):
 			wroteStopFlag = true;
 			endTypingGame(message, wroteStopFlag);
 			break;

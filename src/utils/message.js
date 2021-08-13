@@ -3,24 +3,25 @@ const { react } = require('./react');
 /**
  * Private message reply template
  */
-function messageTemplate(author = undefined, {title = "", content = "", description = "", color = "", url = "", fields = undefined}) {
+function messageTemplate(author = undefined, { title = "", content = " ", description = "", color = "GREY", url = "", fields = undefined }) {
+    const embed = (description || fields) && {
+        author: author && {
+            name: `${author?.username}'s`,
+            iconURL: author?.displayAvatarURL(),
+            url: `https://discord.com/channels/@me/${author?.id}`
+        },
+        color,
+        description,
+        fields,
+        title,
+        thumbnail: author && {
+            url: author?.displayAvatarURL()
+        },
+        url
+    };
     return {
         content,
-        embed: (description || fields) && {
-            author: author && {
-                name: `${author?.username}'s`,
-                iconURL: author?.displayAvatarURL(),
-                url: `https://discord.com/channels/@me/${author?.id}`
-            },
-            color,
-            description,
-            fields,
-            title,
-            thumbnail: author && {
-                url: author?.displayAvatarURL()
-            },
-            url
-        }
+        embeds: embed ? [embed] : undefined
     }
 }
 
@@ -36,16 +37,16 @@ function messageTemplate(author = undefined, {title = "", content = "", descript
  * @param withAuthor?   display author on the embed message
  * @return message      the reply message
  */
-function replyInfo(message, {title = "", color = "BLUE", withAuthor = false, ...rest}) {
-    return message.channel.send(messageTemplate(withAuthor && message.author, {title, color, ...rest}));
+function replyInfo(message, { title = "", color = "BLUE", withAuthor = false, ...rest }) {
+    return message.channel.send(messageTemplate(withAuthor && message.author, { title, color, ...rest }));
 }
 
-function replySuccess(message, {title = "Success ✅", color = "GREEN", withAuthor = false, ...rest}) {
-    return message.channel.send(messageTemplate(withAuthor && message.author, {title, color, ...rest}));
+function replySuccess(message, { title = "Success ✅", color = "GREEN", withAuthor = false, ...rest }) {
+    return message.channel.send(messageTemplate(withAuthor && message.author, { title, color, ...rest }));
 }
 
-function replyError(message, {title = "Error ❌", color = "RED", withAuthor = false, ...rest}) {
-    return message.channel.send(messageTemplate(withAuthor && message.author, {title, color, ...rest}));
+function replyError(message, { title = "Error ❌", color = "RED", withAuthor = false, ...rest }) {
+    return message.channel.send(messageTemplate(withAuthor && message.author, { title, color, ...rest }));
 }
 
 /**
@@ -59,13 +60,13 @@ function replyError(message, {title = "Error ❌", color = "RED", withAuthor = f
 function replySurvey(message, survey, surveyOptions, delay) {
     return message.channel.send(survey).then(async (survey) => {
         react(survey, null, surveyOptions);
-        return survey.awaitReactions((reaction, user) => user.id === message.author.id && surveyOptions.includes(reaction.emoji.name), { max: 1, time: delay })
+        return survey.awaitReactions({ max: 1, time: delay, filter: (reaction, user) => user.id === message.author.id && surveyOptions.includes(reaction.emoji.name) })
             .then((collected) => collected?.first()?.emoji?.name);
     });
 }
 
-function sendDirectMessage(user, {title = "", color = "", ...rest}) {
-    return user.send(messageTemplate(null, {title, color, ...rest}));
+function sendDirectMessage(user, { title = "", color = "GREY", ...rest }) {
+    return user.send(messageTemplate(null, { title, color, ...rest }));
 }
 
 module.exports = { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage };
