@@ -18,8 +18,8 @@ const { manualUnMute } = require("./scripts/users/permissions");
 const { regularQualifyCheck } = require("./scripts/users/user-utilities");
 const { isDm, handleDmReactionAdd } = require("./scripts/users/dm/dm");
 const { addBookmark, removeBookmark } = require("./scripts/users/dm/bookmarks");
-const { unPin50thMsg, getAllChannels, ping, handleHelpCommand } = require("./scripts/utilities");
-const { typingGame, typingGameListener, endTypingGame, gameExplanation } = require("./scripts/activities/games");
+const { unPin50thMsg, getAllChannels, ping, isKoreanChannel, isLinksChannel, handleHelpCommand } = require("./scripts/utilities");
+const { gameExplanation, shouldStartGame, startGame, endGame, gameIsRunning, gameListener } = require("./scripts/activities/games");
 const { createStudySession, getUpcomingStudySessions, cancelStudySessionFromCommand, cancelStudySessionFromDeletion, subscribeStudySession, unsubscribeStudySession, updateStudySessionDetails } = require("./scripts/activities/study-session");
 const { convertBetweenTimezones } = require("./scripts/utility-commands/time-and-date");
 const { loadMessageReaction } = require("./utils/cache");
@@ -41,8 +41,6 @@ function isMessageIgnored(message) {
 	if (message.type === "PINS_ADD") return true; // Ignores PIN messages
 	return false;
 }
-
-global.tgFirstRoundStarted = false; // Flag for Typing Game below
 /* -------------------------------------------------------- */
 
 /* ________________ INITIATING FUNCTION ________________ */
@@ -95,21 +93,15 @@ client.on("message", (message) => {
 	}
 
 	// --- EXERCISES ---
-	let wroteStopFlag = false;
-
 	switch (true) {
-		// Start Typing Game
-		case (text.includes(process.env.CLIENT_ID) && text.includes("typing")) || text === "!t" || text === "!ㅌ":
-			typingGame(message, client);
+		case gameIsRunning():
+			gameListener(message);
 			break;
-		// Stop Typing Game
+		case shouldStartGame(message, client):
+			startGame(message);
+			break;
 		case text.includes(process.env.CLIENT_ID) && text.includes("stop"):
-			wroteStopFlag = true;
-			endTypingGame(message, wroteStopFlag);
-			break;
-		// Pass Message to Listener (while exercise is in progress)
-		case global.typingFlag === true:
-			typingGameListener(message, client);
+			endGame(message, true);
 			break;
 	}
 
@@ -126,12 +118,12 @@ client.on("message", (message) => {
 
 	// Ensure long conversations in English aren't being had in Korean Channel
 	const channel = message.channel;
-	if (channel.id === process.env.KOREAN_CHANNEL) {
+	if (isKoreanChannel(channel)) {
 		koreanObserver(message, chnlMsgs, client);
 	}
 
 	// Ensure long conversations aren't being had in Resource Channel
-	if (channel.id === process.env.LINKS_CHANNEL) {
+	if (isLinksChannel(channel)) {
 		resourcesObserver(message, users, client);
 	}
 
