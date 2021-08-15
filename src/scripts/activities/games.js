@@ -3,6 +3,7 @@
 /* --------------------------------------- */
 
 const GoogleSheets = require("../../connections/google-sheets-conn");
+const NUM_OF_ROUNDS = 5;
 
 /* ____________ Main Typing Game Function ____________ */
 
@@ -29,7 +30,13 @@ async function typingGame(message, client) {
 		/* Immediately sets listener flag to true at the start of each round */
 		global.typingGame.listenerFlag = true;
 
-		const { word, definition } = await getVocab(message);
+		// Get the list of shuffled words once for all the rounds in the game,
+		// and take them one by one per round.
+		if (global.typingGame.shuffledWords === undefined) {
+			global.typingGame.shuffledWords = await getShuffledWords(message);
+		}
+
+		const { word, definition } = global.typingGame.shuffledWords.pop();
 
 		if (!global.tgFirstRoundStarted) {
 			setTimeout(() => message.channel.send(`So you're professor fasty fast. :smirk:\nWell let's see you type this word in Korean then!`), 1000);
@@ -66,7 +73,7 @@ async function typingGame(message, client) {
 }
 /* ------------------------------------------- */
 
-async function getVocab(message) {
+async function getShuffledWords(message) {
 	// Pulls random word from vocabWords
 	const oldOrNewVocab = Math.floor(Math.random() * 4); //Determines whether user gets old or new vocab
 	const range = oldOrNewVocab < 1 ? "Old Vocab!A2:B" : "Weekly Vocab!A2:B";
@@ -76,8 +83,17 @@ async function getVocab(message) {
 		endTypingGame(message, false, true);
 		return;
 	}
-	const seed = Math.floor(Math.random() * vocabList.length);
-	return vocabList[seed];
+
+	// Shuffle the words into a list based on the number of rounds.
+	let count = NUM_OF_ROUNDS;
+	const shuffledWords = [];
+
+	while (count--) {
+		const randomizedVocabIdx = Math.floor(Math.random() * vocabList.length - 1);
+		shuffledWords.push(vocabList.splice(randomizedVocabIdx, 1)[0]);
+	}
+
+	return shuffledWords;
 }
 
 /* _________________ Listens for messages from participants ___________________ */
@@ -110,7 +126,7 @@ function typingGameListener(message, client) {
 
 			message.channel.send(`Manomanoman, you sure are good at this!\n**${author} won round ${global.typingGame.roundCount}!**\nI wasn't really counting or anything, but it took you **${inSeconds} seconds**.`);
 
-			if (global.typingGame.roundCount < 5) {
+			if (global.typingGame.roundCount < NUM_OF_ROUNDS) {
 				setTimeout(
 					() =>
 						message.channel.send(`Round ${global.typingGame.roundCount + 1} starts in **5**`).then((msg) => {
