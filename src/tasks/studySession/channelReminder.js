@@ -1,9 +1,7 @@
-const { getUpcomingStudySessionsForScheduler } = require('../../scripts/activities/study-session');
+const StudySession = require("mongoose").model("StudySession");
 const { getUTCFullDate } = require("../../utils/date");
 
 const upcomingStudySessionMessageContent = "Here are the upcoming study sessions:\n*Make sure to check the time zones!*";
-const oneHour = 60 * 60 * 1000;
-const interval = oneHour * 5;
 
 export default function sendChannelReminder(client) {
     const studySessionChannel = client.channels.cache.get(process.env.STUDY_SESSION_CHANNEL);
@@ -28,17 +26,19 @@ export default function sendChannelReminder(client) {
 
         const mostRecentStudySessionMessage = studySessionMessages.first();
 
-        if (isMessageOlderThan5HoursAgo(mostRecentStudySessionMessage)) {
-            mostRecentStudySessionMessage.delete().then(() => {
-                makeStudySessionMessage().then((studyMessage) => {
+        makeStudySessionMessage().then((studyMessage) => {
+            if (upcomingSessionsAreDifferent(mostRecentStudySessionMessage, studyMessage)) {
+                mostRecentStudySessionMessage.delete().then(() => {
                     studySessionChannel.send(studyMessage).catch((error) => {
                         console.log(error);
                     });
+                }).catch((error) => {
+                    console.log(error);
                 });
-            }).catch((error) => {
-                console.log(error);
-            });
-        }
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
     }).catch(function (error) {
         console.log(error)
     });
@@ -52,10 +52,6 @@ function getMessagesMadeByTheBot(messages) {
 
 function isStudySessionMessage(message) {
     return message.content === upcomingStudySessionMessageContent;
-}
-
-function isMessageOlderThan5HoursAgo(message) {
-    return (new Date() - message.createdAt) > interval;
 }
 
 function makeStudySessionMessage() {
@@ -79,6 +75,12 @@ function makeStudySessionMessage() {
     });
 }
 
+function getUpcomingStudySessionsForScheduler() {
+    return StudySession.find({ startDate: { $gt: new Date() } }, null, { sort: "startDate" }).limit(5).catch((error) => {
+        console.log(error);
+    });
+}
+
 function getUpcomingStudySessionSummary(message) {
     if (!message || !message.text) {
         return "";
@@ -96,6 +98,21 @@ function getUpcomingStudySessionSummary(message) {
         return truncatedString + "...";
     }
     return truncatedString;
+}
+
+function upcomingSessionsAreDifferent(oldMessage, newMessage) {
+    const oldMessageEmbed = oldMessage.embeds[0];
+    const newMessageEmbed = newMessage.embed;
+    if (oldMessageEmbed.title !== newMessageEmbed.title) {
+        return true;
+    }
+    if (oldMessageEmbed.fields.length !== newMessageEmbed.fields.length) {
+        return true;
+    }
+    return oldMessageEmbed.fields.some((oldMessageEmbedField, index) => {
+        return newMessageEmbed.fields[index].name !== oldMessageEmbedField.name ||
+            newMessageEmbed.fields[index].value !== oldMessageEmbedField.value
+    });
 }
 
 function createNotFoundMessage() {

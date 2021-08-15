@@ -1,7 +1,8 @@
+const sendChannelReminder = require('./../../tasks/studySession/channelReminder').default;
 const StudySession = require("mongoose").model("StudySession");
 const { react } = require("../../utils/react");
 const { STUDY_SESSION } = require("../../constants/studySession");
-const { replyInfo, replySuccess, replyError, replySurvey, sendDirectMessage } = require("../../utils/message");
+const { replySuccess, replyError, sendDirectMessage } = require("../../utils/message");
 
 function getStudySessionDate(text) {
 	// Regex Declaration
@@ -58,6 +59,7 @@ function createStudySession(message) {
 		.then(() => {
 			replySuccess(message, STUDY_SESSION.CREATE.SUCCESS(studySession));
 			react(message, null, ["⭐"]);
+			sendChannelReminder(message.author.client);
 		})
 		.catch((error) => replyError(message, STUDY_SESSION.CREATE.ERROR(error)));
 }

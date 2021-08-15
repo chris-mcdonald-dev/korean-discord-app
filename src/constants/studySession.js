@@ -4,7 +4,7 @@ const { getUTCFullDate, getUTCFullTime } = require("../utils/date");
 const STUDY_SESSION = {
 	CREATE: {
 		SUCCESS: (session) => ({
-			title: "STUDY SESSION",
+			title: getCreatedSessionTitle(session.message),
 			content: "Study session has been registered successfully!",
 			description: `📆 ${getUTCFullDate(session.startDate, "date")} at ${getUTCFullDate(session.startDate, "time")} *(UTC)*\n🕑 Estimated length: ${session.estimatedLength} minutes.\n\n${getStudySessionText(session.message)}\n\n*If anybody wants to join the session, subscribe using the ⭐ button\nIf you want to cancel the session, delete the message used to create it*`,
 			withAuthor: true,
@@ -99,6 +99,20 @@ const STUDY_SESSION = {
 		},
 	},
 };
+
+function getCreatedSessionTitle(message) {
+	if (!message || !message.text) {
+		return "";
+	}
+
+	const text = message.text;
+	const firstLine = text.split("\n", 1)[0].trim();
+	if (firstLine.length > 0) {
+		return firstLine;
+	}
+
+	return "STUDY SESSION";
+}
 
 function getStudySessionText(message) {
 	if (!message || !message.text) {

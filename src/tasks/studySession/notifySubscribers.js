@@ -6,7 +6,7 @@ const StudySession = mongoose.model("StudySession");
 export default function notifySubscribersTask(client) {
     const now = new Date();
     const limit = new Date().setHours(now.getHours() + 1);
-    StudySession.find({startDate: {$gt: now, $lt: limit}, notificationSent: false}, (error, studySessions) => {
+    StudySession.find({ startDate: { $gt: now, $lte: limit }, notificationSent: false }, (error, studySessions) => {
         if (error) console.error(error);
         if (studySessions.length === 0) return null;
         studySessions.map((studySession) => {
